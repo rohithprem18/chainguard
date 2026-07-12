@@ -1,0 +1,16 @@
+[
+  "sent_tnx",
+  "received_tnx",
+  "unique_sent_to_addresses",
+  "unique_received_from_addresses",
+  "avg_min_between_sent_tnx",
+  "avg_min_between_received_tnx",
+  "time_diff_between_first_and_last_mins",
+  "min_val_sent",
+  "max_val_sent",
+  "avg_val_sent",
+  "avg_val_received",
+  "total_ether_balance",
+  "send_receive_ratio",
+  "counterparty_reuse"
+]

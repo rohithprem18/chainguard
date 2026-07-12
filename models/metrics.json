@@ -1,0 +1,23 @@
+{
+  "trained_on": "2026-08-11",
+  "n_rows": 9816,
+  "n_train": 7852,
+  "n_test": 1964,
+  "positive_rate": 0.222,
+  "cv_pr_auc_mean": 0.9643,
+  "cv_pr_auc_std": 0.0046,
+  "baseline_logreg_pr_auc": 0.5744,
+  "pr_auc": 0.9451,
+  "roc_auc": 0.9817,
+  "precision_at_100": 0.99,
+  "recall_at_90_precision": 0.8624,
+  "brier_before_calibration": 0.0412,
+  "brier_after_calibration": 0.0392,
+  "confusion_matrix": {
+    "threshold": 0.5,
+    "tn": 1491,
+    "fp": 37,
+    "fn": 64,
+    "tp": 372
+  }
+}
