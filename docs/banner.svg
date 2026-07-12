@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" role="img" aria-label="ChainGuard — Ethereum address risk scoring">
+  <title>ChainGuard — Ethereum address risk scoring</title>
+  <defs>
+    <clipPath id="clip"><rect x="1" y="1" width="1198" height="318" rx="16"/></clipPath>
+  </defs>
+
+  <rect x="1" y="1" width="1198" height="318" rx="16" fill="#F6F8FA" stroke="#E3E8EE" stroke-width="2"/>
+
+  <g clip-path="url(#clip)">
+    <line x1="32" y1="60" x2="1168" y2="60" stroke="#E3E8EE" stroke-width="1" opacity="0.55"/>
+    <line x1="32" y1="100" x2="1168" y2="100" stroke="#E3E8EE" stroke-width="1" opacity="0.55"/>
+    <line x1="32" y1="140" x2="1168" y2="140" stroke="#E3E8EE" stroke-width="1" opacity="0.55"/>
+    <line x1="32" y1="180" x2="1168" y2="180" stroke="#E3E8EE" stroke-width="1" opacity="0.55"/>
+    <line x1="32" y1="220" x2="1168" y2="220" stroke="#E3E8EE" stroke-width="1" opacity="0.55"/>
+    <line x1="32" y1="260" x2="1168" y2="260" stroke="#E3E8EE" stroke-width="1" opacity="0.55"/>
+  </g>
+
+  <!-- 3D extruded wordmark: 12 offset layers build the depth, front face on top -->
+  <g font-family="Arial, 'Helvetica Neue', sans-serif" font-weight="900" font-size="112" letter-spacing="-3" text-anchor="middle">
+    <text x="600" y="185" fill="#0F1826" transform="translate(12,12)">ChainGuard</text>
+    <text x="600" y="185" fill="#0F1826" transform="translate(11,11)">ChainGuard</text>
+    <text x="600" y="185" fill="#0F1826" transform="translate(10,10)">ChainGuard</text>
+    <text x="600" y="185" fill="#0F1826" transform="translate(9,9)">ChainGuard</text>
+    <text x="600" y="185" fill="#0F1826" transform="translate(8,8)">ChainGuard</text>
+    <text x="600" y="185" fill="#0F1826" transform="translate(7,7)">ChainGuard</text>
+    <text x="600" y="185" fill="#0F1826" transform="translate(6,6)">ChainGuard</text>
+    <text x="600" y="185" fill="#0F1826" transform="translate(5,5)">ChainGuard</text>
+    <text x="600" y="185" fill="#0F1826" transform="translate(4,4)">ChainGuard</text>
+    <text x="600" y="185" fill="#0F1826" transform="translate(3,3)">ChainGuard</text>
+    <text x="600" y="185" fill="#0F1826" transform="translate(2,2)">ChainGuard</text>
+    <text x="600" y="185" fill="#0F1826" transform="translate(1,1)">ChainGuard</text>
+    <text x="600" y="185" fill="#16202E" stroke="#2952CC" stroke-width="1.5" paint-order="stroke fill">ChainGuard</text>
+  </g>
+
+  <!-- tagline -->
+  <text x="600" y="238" text-anchor="middle" font-family="Consolas, 'JetBrains Mono', monospace" font-size="17" letter-spacing="4" fill="#5B6B7F">ETHEREUM ADDRESS RISK SCORING</text>
+
+  <!-- accent rule -->
+  <line x1="540" y1="258" x2="660" y2="258" stroke="#2952CC" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- band-colour legend, echoing the score ring -->
+  <g font-family="Consolas, 'JetBrains Mono', monospace" font-size="13" fill="#93A1B2">
+    <circle cx="478" cy="284" r="4" fill="#2E7D5B"/>
+    <text x="489" y="288">LOW</text>
+    <circle cx="558" cy="284" r="4" fill="#B7791F"/>
+    <text x="569" y="288">MEDIUM</text>
+    <circle cx="662" cy="284" r="4" fill="#B3372E"/>
+    <text x="673" y="288">HIGH</text>
+  </g>
+</svg>
