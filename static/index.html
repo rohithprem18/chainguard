@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChainGuard — Ethereum address risk scoring</title>
+<meta name="description" content="Score any Ethereum address for patterns seen in reported scam activity.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700&family=Instrument+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #F6F8FA;
+    --surface:   #FFFFFF;
+    --line:      #E3E8EE;
+    --ink:       #16202E;
+    --ink-soft:  #5B6B7F;
+    --ink-faint: #93A1B2;
+    --action:    #2952CC;
+    --action-soft: #E9EEFB;
+    --low:       #2E7D5B;
+    --medium:    #B7791F;
+    --high:      #B3372E;
+    --low-soft:    #E4F1EA;
+    --medium-soft: #FBF0DE;
+    --high-soft:   #F7E4E1;
+    --r: 10px;
+    --ease: cubic-bezier(.2,.7,.3,1);
+  }
+
+  @property --pct {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 0;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 20px 24px;
+  }
+
+  a { color: var(--action); }
+
+  code, .mono {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  /* ---- header row: wordmark + model-info chip ---------------------- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .wordmark {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+  }
+
+  .model-chip {
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  h1 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+  }
+
+  .subhead {
+    color: var(--ink-soft);
+    font-size: 14px;
+    margin: 0 0 24px;
+  }
+
+  /* ---- input row ----------------------------------------------------- */
+  .input-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  #address-input {
+    flex: 1;
+    min-width: 0;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 14px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    color: var(--ink);
+  }
+
+  #address-input::placeholder { color: var(--ink-faint); }
+
+  #address-input:focus, button:focus-visible, .chip:focus-visible, .example-chip:focus-visible {
+    outline: 2px solid var(--action);
+    outline-offset: 2px;
+  }
+
+  #score-btn {
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 14px 20px;
+    background: var(--action);
+    color: #fff;
+    border: none;
+    border-radius: var(--r);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  #score-btn:hover { filter: brightness(1.08); }
+  #score-btn:disabled { opacity: 0.6; cursor: default; }
+
+  /* ---- example chips --------------------------------------------------- */
+  .examples {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .example-chip {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+
+  .example-chip:hover { border-color: var(--action); color: var(--action); }
+
+  /* ---- result card ------------------------------------------------------ */
+  #result-region {
+    margin-top: 28px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 28px;
+  }
+
+  .card-idle {
+    color: var(--ink-faint);
+    font-size: 14px;
+    text-align: center;
+    padding: 40px 28px;
+  }
+
+  /* ---- skeleton loading -------------------------------------------------- */
+  .skeleton { animation: pulse 1.1s ease-in-out infinite; }
+  .skel-ring {
+    width: 160px; height: 160px; border-radius: 50%;
+    background: var(--line);
+    margin: 0 auto 24px;
+  }
+  .skel-line {
+    height: 12px; border-radius: 6px; background: var(--line);
+    margin: 10px auto;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  /* ---- score ring --------------------------------------------------------- */
+  .ring-wrap { display: flex; justify-content: center; margin-bottom: 8px; }
+
+  .ring {
+    --pct: 0;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: conic-gradient(var(--band-color) calc(var(--pct) * 1%), var(--line) 0);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    transition: --pct 400ms var(--ease);
+  }
+
+  .ring::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    background: var(--surface);
+    border-radius: 50%;
+  }
+
+  .ring-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ring-value {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 64px;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .ring-band {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--band-color);
+    margin-top: 8px;
+    text-transform: uppercase;
+  }
+
+  .address-line {
+    text-align: center;
+    margin: 4px 0 24px;
+  }
+
+  .address-copy {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+
+  .address-copy:hover { color: var(--action); }
+
+  /* ---- activity strip ------------------------------------------------------ */
+  .activity {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 16px 0;
+    margin-bottom: 24px;
+  }
+
+  .activity-item { text-align: center; }
+  .activity-value {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .activity-label {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 2px;
+  }
+
+  /* ---- reasons ------------------------------------------------------------- */
+  .reasons-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 14px;
+  }
+
+  .reason {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    opacity: 0;
+    transform: translateY(4px);
+    animation: reason-in 320ms var(--ease) forwards;
+  }
+
+  @keyframes reason-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reason-track {
+    width: 84px;
+    flex-shrink: 0;
+    height: 6px;
+    background: var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .reason-bar {
+    height: 100%;
+    border-radius: 3px;
+    width: 0;
+    transition: width 400ms var(--ease);
+  }
+
+  .reason-fact {
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  /* ---- error states ----------------------------------------------------- */
+  .error-card {
+    text-align: center;
+    padding: 12px;
+  }
+
+  .error-message {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .error-hint {
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  /* ---- footer disclaimer -------------------------------------------------- */
+  footer {
+    margin-top: 32px;
+    font-size: 12px;
+    color: var(--ink-faint);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 480px) {
+    .input-row { flex-direction: column; }
+    .activity { grid-template-columns: repeat(2, 1fr); row-gap: 16px; }
+    h1 { font-size: 24px; }
+    .ring, .skel-ring { width: 140px; height: 140px; }
+    .ring-value { font-size: 48px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ring { transition: none; }
+    .reason { animation: none; opacity: 1; transform: none; }
+    .reason-bar { transition: none; }
+    .skeleton { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <div class="wordmark">ChainGuard</div>
+    <div class="model-chip mono" id="model-chip">loading model info…</div>
+  </div>
+
+  <h1>Score any Ethereum address for patterns seen in reported scam activity.</h1>
+  <p class="subhead">Paste an address to get a calibrated risk score with the three behavioural patterns that drove it.</p>
+
+  <div class="input-row">
+    <input
+      id="address-input"
+      type="text"
+      inputmode="text"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder="0x..."
+      aria-label="Ethereum address">
+    <button id="score-btn" type="button">Score address</button>
+  </div>
+
+  <div class="examples" id="examples" aria-label="Example addresses"></div>
+
+  <div id="result-region" role="region" aria-live="polite">
+    <div class="card card-idle" id="result-card">
+      Paste an address above, or pick an example, to see a risk score.
+    </div>
+  </div>
+
+  <footer id="footer">Risk scores describe patterns in publicly reported data. They are not an accusation and not financial advice.</footer>
+</main>
+
+<script>
+(function () {
+  const input = document.getElementById('address-input');
+  const scoreBtn = document.getElementById('score-btn');
+  const resultCard = document.getElementById('result-card');
+  const modelChip = document.getElementById('model-chip');
+  const examplesEl = document.getElementById('examples');
+  const ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
+
+  function truncate(addr) {
+    return addr.slice(0, 6) + '…' + addr.slice(-4);
+  }
+
+  function fmtNum(n) {
+    return new Intl.NumberFormat('en-US').format(n);
+  }
+
+  // ---- model info chip -------------------------------------------------
+  fetch('/api/model/info')
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(info => {
+      modelChip.textContent =
+        `n=${fmtNum(info.n_rows)} · PR-AUC ${info.pr_auc} · trained ${info.trained_on}`;
+    })
+    .catch(() => { modelChip.textContent = 'model info unavailable'; });
+
+  // ---- example chips ------------------------------------------------------
+  fetch('/api/examples')
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(data => {
+      examplesEl.innerHTML = '';
+      data.examples.forEach(addr => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'example-chip mono';
+        chip.textContent = truncate(addr);
+        chip.addEventListener('click', () => {
+          input.value = addr;
+          runScore(addr);
+        });
+        examplesEl.appendChild(chip);
+      });
+    })
+    .catch(() => {});
+
+  // ---- rendering states ----------------------------------------------------
+  function renderIdle() {
+    resultCard.className = 'card card-idle';
+    resultCard.textContent = 'Paste an address above, or pick an example, to see a risk score.';
+  }
+
+  function renderLoading() {
+    resultCard.className = 'card skeleton';
+    resultCard.innerHTML = `
+      <div class="skel-ring"></div>
+      <div class="skel-line" style="width:60%"></div>
+      <div class="skel-line" style="width:80%"></div>
+      <div class="skel-line" style="width:70%"></div>
+    `;
+  }
+
+  function renderError(body) {
+    resultCard.className = 'card error-card';
+    resultCard.innerHTML = `
+      <div class="error-message">${escapeHtml(body.message || 'Something went wrong.')}</div>
+      <div class="error-hint">${escapeHtml(body.hint || '')}</div>
+    `;
+  }
+
+  function escapeHtml(s) {
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  function renderResult(data) {
+    resultCard.className = 'card';
+    const bandVar = `var(--${data.risk_band})`;
+    const bandSoftVar = `var(--${data.risk_band}-soft)`;
+
+    const maxWeight = Math.max(...data.top_reasons.map(r => Math.abs(r.weight)), 0.0001);
+
+    const reasonsHtml = data.top_reasons.map((r, i) => {
+      const pct = Math.round((Math.abs(r.weight) / maxWeight) * 100);
+      const barColor = r.direction === 'raises' ? bandVar : 'var(--ink-faint)';
+      return `
+        <div class="reason" style="animation-delay:${i * 60}ms">
+          <div class="reason-track"><div class="reason-bar" data-pct="${pct}" style="background:${barColor}"></div></div>
+          <div class="reason-fact">${escapeHtml(r.fact)}</div>
+        </div>
+      `;
+    }).join('');
+
+    resultCard.innerHTML = `
+      <div class="ring-wrap">
+        <div class="ring" id="score-ring" style="--band-color:${bandVar}">
+          <div class="ring-inner">
+            <div class="ring-value">${data.risk_score.toFixed(2)}</div>
+            <div class="ring-band">${data.risk_band}</div>
+          </div>
+        </div>
+      </div>
+      <div class="address-line">
+        <button class="address-copy mono" id="copy-btn" title="Click to copy full address">${truncate(data.address)}</button>
+      </div>
+      <div class="activity">
+        <div class="activity-item"><div class="activity-value">${fmtNum(data.activity.sent)}</div><div class="activity-label">sent</div></div>
+        <div class="activity-item"><div class="activity-value">${fmtNum(data.activity.received)}</div><div class="activity-label">received</div></div>
+        <div class="activity-item"><div class="activity-value">${fmtNum(data.activity.unique_counterparties)}</div><div class="activity-label">counterparties</div></div>
+        <div class="activity-item"><div class="activity-value">${fmtNum(data.activity.lifetime_days)}</div><div class="activity-label">lifetime days</div></div>
+      </div>
+      <div class="reasons-title">Why this score</div>
+      ${reasonsHtml}
+    `;
+
+    document.getElementById('copy-btn').addEventListener('click', () => {
+      navigator.clipboard.writeText(data.address).then(() => {
+        const btn = document.getElementById('copy-btn');
+        const original = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(() => { btn.textContent = original; }, 1200);
+      });
+    });
+
+    // Trigger the ring fill and bar widths on the next frame so the
+    // transition actually animates from 0.
+    const ring = document.getElementById('score-ring');
+    const bars = resultCard.querySelectorAll('.reason-bar');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        ring.style.setProperty('--pct', data.risk_score * 100);
+        bars.forEach(b => { b.style.width = b.dataset.pct + '%'; });
+      });
+    });
+  }
+
+  // ---- scoring ---------------------------------------------------------
+  let inFlight = false;
+
+  function runScore(rawAddress) {
+    const address = (rawAddress || '').trim();
+    if (!address || inFlight) return;
+
+    inFlight = true;
+    scoreBtn.disabled = true;
+    renderLoading();
+
+    fetch('/api/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address }),
+    })
+      .then(async (r) => {
+        const body = await r.json();
+        if (!r.ok) {
+          renderError(body);
+          return;
+        }
+        renderResult(body);
+        const url = new URL(window.location);
+        url.searchParams.set('address', body.address);
+        history.replaceState(null, '', url);
+      })
+      .catch(() => {
+        renderError({
+          message: 'Could not reach the scoring service.',
+          hint: 'Check your connection and try again.',
+        });
+      })
+      .finally(() => {
+        inFlight = false;
+        scoreBtn.disabled = false;
+      });
+  }
+
+  scoreBtn.addEventListener('click', () => runScore(input.value));
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') runScore(input.value);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement !== input) {
+      e.preventDefault();
+      input.focus();
+    }
+  });
+
+  // ---- load ?address= from the URL, if present -------------------------
+  const params = new URLSearchParams(window.location.search);
+  const initial = params.get('address');
+  if (initial && ADDRESS_RE.test(initial)) {
+    input.value = initial;
+    runScore(initial);
+  } else {
+    renderIdle();
+  }
+})();
+</script>
+</body>
+</html>
