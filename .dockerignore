@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+data/raw/*.csv
+.git/
+.gitignore
+docs/SPEC.md
+docs/
+README.md
+LICENSE
