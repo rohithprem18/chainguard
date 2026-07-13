@@ -15,6 +15,8 @@ Paste an address, get a calibrated risk score with the three behavioural pattern
 ![PR--AUC](https://img.shields.io/badge/PR--AUC-0.9451-success)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
+**[Live demo →](https://chainguard-zxbl.onrender.com/)** — free Render tier: the first request after idle can take ~30-50s to wake the instance.
+
 </div>
 
 ---
