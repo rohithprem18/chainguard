@@ -39,7 +39,7 @@ ChainGuard reports **patterns** in publicly reported data — an unusually high 
 
 No build step, no database, no cloud dependency: one Docker image, one port, a Parquet table loaded into memory.
 
-**Interface:** a dark security-dashboard theme — restrained neon-green accent against near-black surfaces, monospace for every address/hash/metric, risk color reserved strictly for the gauge and the risk pill (never decorative). Vanilla HTML/CSS/JS, one file, no framework.
+**Interface:** a light, Swiss-editorial "risk intelligence report" — IBM Plex Sans/Mono, a single restrained indigo accent for interaction (buttons, links, focus), a precise SVG instrument-style gauge, and risk color (green/amber/red) reserved strictly for the gauge and the risk pill — never decorative. Vanilla HTML/CSS/JS, one file, no framework.
 
 ## Screenshots
 
