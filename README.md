@@ -102,6 +102,45 @@ Model, calibrator, explainer and feature table load once, in a FastAPI `lifespan
 
 **Pipeline:** dedupe on address → stratified 80/20 split (`random_state=42`) → `LGBMClassifier` (400 trees, `class_weight="balanced"`, no hyperparameter search) → isotonic calibration (`CalibratedClassifierCV`, fit on a held-out 15% slice of train) → thresholds derived from the test-set precision-recall curve.
 
+### Data schema
+
+There is no database — by design (§1). `train.py` writes one flat feature table, `models/features.parquet`, loaded into memory once at startup and looked up by address. This is its full schema:
+
+```mermaid
+erDiagram
+    FEATURES_PARQUET {
+        string address PK "index — lowercase, 0x + 40 hex chars"
+        int flag "ground-truth label: 1 = historically reported"
+        int sent_tnx "count of outgoing transactions"
+        int received_tnx "count of incoming transactions"
+        int unique_sent_to_addresses "distinct outgoing counterparties"
+        int unique_received_from_addresses "distinct incoming counterparties"
+        float avg_min_between_sent_tnx "mean minutes between sends"
+        float avg_min_between_received_tnx "mean minutes between receipts"
+        float time_diff_between_first_and_last_mins "account lifetime, minutes"
+        float min_val_sent "smallest single outgoing transfer"
+        float max_val_sent "largest single outgoing transfer"
+        float avg_val_sent "mean outgoing transfer value"
+        float avg_val_received "mean incoming transfer value"
+        float total_ether_balance "current balance"
+        float send_receive_ratio "engineered — sent / (received + 1)"
+        float counterparty_reuse "engineered — unique_sent / (sent + 1)"
+    }
+```
+
+9,816 rows, one row per deduplicated address, 15 columns (14 model features + `flag`). `flag` is carried in the table for building the example chips (`GET /api/examples`) but is never passed to the model at inference time — only `models/columns.json`'s 14 names are.
+
+The rest of `models/` are the artifacts this table is scored against, all produced by the same `train.py` run and committed together so they never drift out of sync:
+
+| File | Contents |
+|---|---|
+| `features.parquet` | the table above — the only thing queried per request |
+| `columns.json` | the 14 feature names, in the exact order the model expects them |
+| `model.txt` | the LightGBM booster, native text format |
+| `calibrator.joblib` | the fitted isotonic regressor (`raw score → calibrated risk_score`) |
+| `thresholds.json` | `{"medium": ..., "high": ...}`, derived from the PR curve (§4.5) |
+| `metrics.json` | everything in the [Metrics](#metrics) table below, plus split sizes and `trained_on` |
+
 ### Metrics
 
 Every number below comes straight from `models/metrics.json`, produced by `train.py`. Trained on **2026-08-21**, 9,816 deduplicated rows (7,852 train / 1,964 test, 22.2% positive in both).
