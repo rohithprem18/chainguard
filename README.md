@@ -39,19 +39,21 @@ ChainGuard reports **patterns** in publicly reported data — an unusually high 
 
 No build step, no database, no cloud dependency: one Docker image, one port, a Parquet table loaded into memory.
 
+**Interface:** a dark security-dashboard theme — restrained neon-green accent against near-black surfaces, monospace for every address/hash/metric, risk color reserved strictly for the gauge and the risk pill (never decorative). Vanilla HTML/CSS/JS, one file, no framework.
+
 ## Screenshots
 
 <table>
 <tr><td align="center"><b>Idle</b></td></tr>
-<tr><td><img src="docs/screenshots/idle.png" width="720" alt="ChainGuard idle state — address input, example chips, empty result card"></td></tr>
+<tr><td><img src="docs/screenshots/idle.png" width="720" alt="ChainGuard idle state — hero, address input, example chips, empty result card"></td></tr>
 <tr><td align="center"><b>Result</b></td></tr>
-<tr><td><img src="docs/screenshots/result.png" width="720" alt="ChainGuard result state — score ring, activity strip, three reason bars"></td></tr>
+<tr><td><img src="docs/screenshots/result.png" width="720" alt="ChainGuard result state — score ring, risk pill, key metrics, why-this-score bars, model transparency strip"></td></tr>
 </table>
 
 <details>
 <summary>360px responsive view</summary>
 <br>
-<img src="docs/screenshots/mobile.png" width="360" alt="ChainGuard at 360px width">
+<img src="docs/screenshots/mobile.png" width="360" alt="ChainGuard at 360px width — stacked gauge and metrics">
 </details>
 
 ## Quickstart

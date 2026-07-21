@@ -7,25 +7,38 @@
 <meta name="description" content="Score any Ethereum address for patterns seen in reported scam activity.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700&family=Instrument+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:        #F6F8FA;
-    --surface:   #FFFFFF;
-    --line:      #E3E8EE;
-    --ink:       #16202E;
-    --ink-soft:  #5B6B7F;
-    --ink-faint: #93A1B2;
-    --action:    #2952CC;
-    --action-soft: #E9EEFB;
-    --low:       #2E7D5B;
-    --medium:    #B7791F;
-    --high:      #B3372E;
-    --low-soft:    #E4F1EA;
-    --medium-soft: #FBF0DE;
-    --high-soft:   #F7E4E1;
-    --r: 10px;
-    --ease: cubic-bezier(.2,.7,.3,1);
+    --bg-primary: #05080D;
+    --bg-secondary: #090E16;
+    --surface-1: #0C131E;
+    --surface-2: #101925;
+    --surface-hover: #14202E;
+
+    --border-subtle: #1A2736;
+    --border-strong: #26384B;
+
+    --text-primary: #F5F7FA;
+    --text-secondary: #9AA9BA;
+    --text-muted: #6F8092;
+
+    --accent-primary: #39E58C;
+    --accent-primary-hover: #4FF09A;
+    --accent-soft: rgba(57, 229, 140, 0.12);
+
+    --blue: #4DA3FF;
+    --purple: #9B6BFF;
+    --yellow: #F7C948;
+    --red: #FF5D73;
+
+    --low: #39E58C;
+    --medium: #F7C948;
+    --high: #FF5D73;
+
+    --r: 12px;
+    --r-lg: 16px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   @property --pct {
@@ -38,74 +51,149 @@
 
   body {
     margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: 'Instrument Sans', system-ui, sans-serif;
-    font-size: 16px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
-  main {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 40px 20px 24px;
+  .bg-decor {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(680px 420px at 82% -8%, rgba(57,229,140,0.08), transparent 60%),
+      radial-gradient(520px 360px at 8% 8%, rgba(77,163,255,0.06), transparent 60%);
+    pointer-events: none;
   }
 
-  a { color: var(--action); }
+  main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+  }
+
+  a { color: var(--accent-primary); }
 
   code, .mono {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
   }
 
-  /* ---- header row: wordmark + model-info chip ---------------------- */
+  svg.icon {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+
+  /* ---- header --------------------------------------------------------- */
   .topbar {
+    max-width: 1000px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
-    margin-bottom: 28px;
+    padding: 22px 24px;
+    min-height: 72px;
   }
 
-  .wordmark {
-    font-family: 'Bricolage Grotesque', sans-serif;
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-weight: 700;
-    font-size: 20px;
+    font-size: 18px;
     letter-spacing: -0.01em;
   }
 
+  .brand svg { width: 22px; height: 22px; color: var(--accent-primary); }
+
   .model-chip {
     font-size: 12px;
-    color: var(--ink-soft);
-    background: var(--surface);
-    border: 1px solid var(--line);
+    color: var(--text-secondary);
+    background: var(--surface-1);
+    border: 1px solid var(--border-subtle);
     border-radius: 999px;
-    padding: 6px 12px;
+    padding: 7px 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  h1 {
-    font-family: 'Bricolage Grotesque', sans-serif;
-    font-weight: 700;
-    font-size: 30px;
-    line-height: 1.25;
-    letter-spacing: -0.01em;
-    margin: 0 0 8px;
+  /* ---- hero ------------------------------------------------------------ */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    align-items: center;
+    gap: 24px;
+    padding: 20px 0 36px;
   }
+
+  h1 {
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    margin: 0 0 14px;
+    max-width: 620px;
+  }
+
+  h1 .accent { color: var(--accent-primary); }
 
   .subhead {
-    color: var(--ink-soft);
-    font-size: 14px;
-    margin: 0 0 24px;
+    color: var(--text-secondary);
+    font-size: 15px;
+    max-width: 480px;
+    margin: 0;
   }
 
-  /* ---- input row ----------------------------------------------------- */
+  .hero-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.55;
+  }
+
+  .hero-right svg { width: 100%; max-width: 260px; height: auto; color: var(--border-strong); }
+  .hero-right svg .node { color: var(--accent-primary); opacity: 0.7; }
+
+  /* ---- search section ---------------------------------------------------- */
   .input-row {
     display: flex;
     gap: 10px;
+  }
+
+  .input-wrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 62px;
+    padding: 0 18px;
+    background: var(--surface-1);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r);
+    transition: border-color 120ms var(--ease), box-shadow 120ms var(--ease);
+  }
+
+  .input-wrap svg { color: var(--text-muted); }
+
+  .input-wrap:focus-within {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(57,229,140,.10);
+  }
+
+  .input-wrap.invalid {
+    border-color: var(--red);
   }
 
   #address-input {
@@ -113,107 +201,168 @@
     min-width: 0;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 14px;
-    padding: 14px 16px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--r);
-    color: var(--ink);
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    height: 100%;
   }
 
-  #address-input::placeholder { color: var(--ink-faint); }
-
-  #address-input:focus, button:focus-visible, .chip:focus-visible, .example-chip:focus-visible {
-    outline: 2px solid var(--action);
-    outline-offset: 2px;
-  }
+  #address-input:focus { outline: none; }
+  #address-input::placeholder { color: var(--text-muted); }
 
   #score-btn {
-    font-family: 'Instrument Sans', sans-serif;
-    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
     font-size: 14px;
-    padding: 14px 20px;
-    background: var(--action);
-    color: #fff;
+    height: 62px;
+    padding: 0 24px;
+    background: var(--accent-primary);
+    color: #04170E;
     border: none;
     border-radius: var(--r);
     cursor: pointer;
     white-space: nowrap;
+    min-width: 44px;
+    transition: background 120ms var(--ease), transform 120ms var(--ease);
   }
 
-  #score-btn:hover { filter: brightness(1.08); }
+  #score-btn:hover:not(:disabled) { background: var(--accent-primary-hover); }
+  #score-btn:active:not(:disabled) { transform: translateY(1px); }
   #score-btn:disabled { opacity: 0.6; cursor: default; }
+
+  #address-input:focus-visible, #score-btn:focus-visible, .chip:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+
+  .invalid-hint {
+    color: var(--red);
+    font-size: 13px;
+    margin: 8px 2px 0;
+    display: none;
+  }
+  .invalid-hint.show { display: block; }
 
   /* ---- example chips --------------------------------------------------- */
   .examples {
     display: flex;
+    align-items: center;
     gap: 8px;
     flex-wrap: wrap;
     margin-top: 14px;
   }
 
-  .example-chip {
+  .examples-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-right: 2px;
+  }
+
+  .chip {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 12px;
-    color: var(--ink-soft);
-    background: var(--surface);
-    border: 1px solid var(--line);
+    color: var(--text-secondary);
+    background: var(--surface-1);
+    border: 1px solid var(--border-subtle);
     border-radius: 999px;
-    padding: 6px 12px;
+    padding: 7px 13px;
     cursor: pointer;
+    min-height: 30px;
   }
 
-  .example-chip:hover { border-color: var(--action); color: var(--action); }
+  .chip:hover { border-color: var(--border-strong); color: var(--text-primary); }
 
-  /* ---- result card ------------------------------------------------------ */
-  #result-region {
-    margin-top: 28px;
+  .chip.selected {
+    color: var(--accent-primary);
+    background: var(--accent-soft);
+    border-color: rgba(57,229,140,.42);
   }
+
+  /* ---- result region ------------------------------------------------------ */
+  #result-region { margin-top: 32px; }
 
   .card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--r);
-    padding: 28px;
+    background: var(--surface-1);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-lg);
+    box-shadow: 0 8px 30px rgba(0,0,0,.16);
   }
 
   .card-idle {
-    color: var(--ink-faint);
+    color: var(--text-muted);
     font-size: 14px;
     text-align: center;
-    padding: 40px 28px;
+    padding: 52px 28px;
+  }
+
+  .card-idle .idle-title {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 6px;
   }
 
   /* ---- skeleton loading -------------------------------------------------- */
+  .skeleton-card { padding: 32px; display: grid; grid-template-columns: 35% 1fr; gap: 28px; }
   .skeleton { animation: pulse 1.1s ease-in-out infinite; }
   .skel-ring {
-    width: 160px; height: 160px; border-radius: 50%;
-    background: var(--line);
-    margin: 0 auto 24px;
+    width: 150px; height: 150px; border-radius: 50%;
+    background: var(--surface-2);
+    margin: 0 auto;
   }
   .skel-line {
-    height: 12px; border-radius: 6px; background: var(--line);
-    margin: 10px auto;
+    height: 12px; border-radius: 6px; background: var(--surface-2);
+    margin: 12px 0;
   }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+  @media (max-width: 720px) {
+    .skeleton-card { grid-template-columns: 1fr; }
+  }
+
+  /* ---- risk result card ---------------------------------------------------- */
+  .result-card {
+    display: grid;
+    grid-template-columns: 34% 1fr;
+    gap: 8px;
+  }
+
+  .gauge-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+    border-right: 1px solid var(--border-subtle);
+  }
+
+  .info-col { padding: 32px 32px 28px; min-width: 0; }
+
+  @media (max-width: 720px) {
+    .result-card { grid-template-columns: 1fr; }
+    .gauge-col { border-right: none; border-bottom: 1px solid var(--border-subtle); padding: 28px; }
+    .info-col { padding: 24px; }
+  }
 
   /* ---- score ring --------------------------------------------------------- */
-  .ring-wrap { display: flex; justify-content: center; margin-bottom: 8px; }
-
   .ring {
     --pct: 0;
-    width: 160px; height: 160px;
+    width: 156px; height: 156px;
     border-radius: 50%;
-    background: conic-gradient(var(--band-color) calc(var(--pct) * 1%), var(--line) 0);
+    background: conic-gradient(var(--band-color) calc(var(--pct) * 1%), var(--surface-2) 0);
     display: flex; align-items: center; justify-content: center;
     position: relative;
-    transition: --pct 400ms var(--ease);
+    transition: --pct 600ms var(--ease);
   }
 
   .ring::before {
     content: "";
     position: absolute;
-    inset: 14px;
-    background: var(--surface);
+    inset: 12px;
+    background: var(--surface-1);
     border-radius: 50%;
   }
 
@@ -226,92 +375,182 @@
   }
 
   .ring-value {
-    font-family: 'Bricolage Grotesque', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
-    font-size: 64px;
+    font-size: 44px;
     line-height: 1;
-    color: var(--ink);
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
   }
 
   .ring-band {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
     color: var(--band-color);
-    margin-top: 8px;
+    margin-top: 10px;
     text-transform: uppercase;
   }
 
-  .address-line {
-    text-align: center;
-    margin: 4px 0 24px;
+  .ring-caption {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ---- address row + interpretation --------------------------------------- */
+  .address-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
   }
 
   .address-copy {
+    display: flex;
+    align-items: center;
+    gap: 7px;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 13px;
-    color: var(--ink-soft);
+    font-size: 14px;
+    color: var(--text-primary);
     background: none;
     border: none;
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 4px 0;
   }
 
-  .address-copy:hover { color: var(--action); }
+  .address-copy svg { color: var(--text-muted); width: 14px; height: 14px; }
+  .address-copy:hover svg { color: var(--accent-primary); }
 
-  /* ---- activity strip ------------------------------------------------------ */
-  .activity {
+  .risk-pill {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  .interpretation {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.65;
+    margin: 0 0 22px;
+    max-width: 54ch;
+  }
+
+  /* ---- metrics row ----------------------------------------------------- */
+  .metrics-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    padding: 16px 0;
-    margin-bottom: 24px;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 20px;
   }
 
-  .activity-item { text-align: center; }
-  .activity-value {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 16px;
-    font-weight: 500;
+  .metric-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding-right: 12px;
+    border-right: 1px solid var(--border-subtle);
   }
-  .activity-label {
-    font-size: 12px;
-    color: var(--ink-faint);
+  .metric-item:last-child { border-right: none; }
+
+  .metric-item svg { color: var(--text-muted); width: 15px; height: 15px; }
+
+  .metric-body { min-width: 0; }
+
+  .metric-value {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.1;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: var(--text-muted);
     margin-top: 2px;
   }
 
-  /* ---- reasons ------------------------------------------------------------- */
-  .reasons-title {
+  @media (max-width: 480px) {
+    .metrics-row { grid-template-columns: repeat(2, 1fr); row-gap: 18px; }
+    .metric-item:nth-child(2) { border-right: none; }
+  }
+
+  .analysis-note {
     font-size: 12px;
-    font-weight: 500;
-    color: var(--ink-soft);
+    color: var(--text-muted);
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  /* ---- why this score --------------------------------------------------- */
+  .why-card {
+    margin-top: 8px;
+    padding: 26px 32px 28px;
+  }
+
+  .why-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 14px;
+    letter-spacing: 0.07em;
+    margin-bottom: 18px;
   }
 
   .reason {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    padding: 14px 0;
+    border-top: 1px solid var(--border-subtle);
     opacity: 0;
     transform: translateY(4px);
-    animation: reason-in 320ms var(--ease) forwards;
+    animation: reason-in 300ms var(--ease) forwards;
   }
+  .reason:first-of-type { border-top: none; padding-top: 0; }
 
   @keyframes reason-in {
     to { opacity: 1; transform: translateY(0); }
   }
 
+  .reason-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+  }
+
+  .reason-fact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .reason-fact svg { color: var(--text-muted); }
+
+  .reason-strength {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
   .reason-track {
-    width: 84px;
-    flex-shrink: 0;
-    height: 6px;
-    background: var(--line);
+    margin-top: 10px;
+    width: 100%;
+    height: 5px;
+    background: var(--surface-2);
     border-radius: 3px;
     overflow: hidden;
   }
@@ -323,43 +562,78 @@
     transition: width 400ms var(--ease);
   }
 
-  .reason-fact {
-    font-size: 14px;
-    color: var(--ink);
-  }
-
-  /* ---- error states ----------------------------------------------------- */
+  /* ---- error / 422 states ----------------------------------------------- */
   .error-card {
     text-align: center;
-    padding: 12px;
+    padding: 44px 28px;
   }
 
   .error-message {
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 6px;
+    color: var(--text-primary);
   }
 
   .error-hint {
     font-size: 14px;
-    color: var(--ink-soft);
+    color: var(--text-secondary);
+  }
+
+  /* ---- transparency bar --------------------------------------------------- */
+  .transparency-bar {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 22px 0;
+  }
+
+  .transparency-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0 22px;
+    border-right: 1px solid var(--border-subtle);
+  }
+  .transparency-item:last-child { border-right: none; }
+
+  .transparency-item svg { color: var(--accent-primary); width: 18px; height: 18px; margin-top: 2px; }
+
+  .transparency-label { font-size: 12px; color: var(--text-muted); }
+  .transparency-value {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-top: 3px;
+  }
+
+  @media (max-width: 720px) {
+    .transparency-bar { grid-template-columns: repeat(2, 1fr); row-gap: 20px; }
+    .transparency-item:nth-child(2) { border-right: none; }
+    .transparency-item:nth-child(2n) { border-right: none; }
   }
 
   /* ---- footer disclaimer -------------------------------------------------- */
   footer {
     margin-top: 32px;
     font-size: 12px;
-    color: var(--ink-faint);
+    color: var(--text-muted);
     text-align: center;
     line-height: 1.6;
   }
 
+  @media (max-width: 720px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+  }
+
   @media (max-width: 480px) {
     .input-row { flex-direction: column; }
-    .activity { grid-template-columns: repeat(2, 1fr); row-gap: 16px; }
-    h1 { font-size: 24px; }
-    .ring, .skel-ring { width: 140px; height: 140px; }
-    .ring-value { font-size: 48px; }
+    #score-btn { width: 100%; }
+    h1 { font-size: 28px; }
+    .ring, .skel-ring { width: 132px; height: 132px; }
+    .ring-value { font-size: 36px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -371,34 +645,76 @@
 </style>
 </head>
 <body>
+<div class="bg-decor" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+    ChainGuard
+  </div>
+  <div class="model-chip mono" id="model-chip">loading model info…</div>
+</header>
+
 <main>
-  <div class="topbar">
-    <div class="wordmark">ChainGuard</div>
-    <div class="model-chip mono" id="model-chip">loading model info…</div>
-  </div>
+  <section class="hero">
+    <div class="hero-left">
+      <h1>Score any Ethereum address for patterns seen in <span class="accent">reported scam activity.</span></h1>
+      <p class="subhead">Paste an address to get a calibrated risk score and the three behavioural patterns that contributed most.</p>
+    </div>
+    <div class="hero-right" aria-hidden="true">
+      <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1">
+        <circle cx="100" cy="30" r="4" class="node" fill="currentColor" stroke="none"/>
+        <circle cx="40" cy="80" r="4" class="node" fill="currentColor" stroke="none"/>
+        <circle cx="160" cy="80" r="4" class="node" fill="currentColor" stroke="none"/>
+        <circle cx="70" cy="150" r="4" class="node" fill="currentColor" stroke="none"/>
+        <circle cx="130" cy="150" r="4" class="node" fill="currentColor" stroke="none"/>
+        <circle cx="100" cy="110" r="5" class="node" fill="currentColor" stroke="none"/>
+        <line x1="100" y1="30" x2="40" y2="80"/>
+        <line x1="100" y1="30" x2="160" y2="80"/>
+        <line x1="40" y1="80" x2="100" y2="110"/>
+        <line x1="160" y1="80" x2="100" y2="110"/>
+        <line x1="100" y1="110" x2="70" y2="150"/>
+        <line x1="100" y1="110" x2="130" y2="150"/>
+        <line x1="40" y1="80" x2="70" y2="150"/>
+        <line x1="160" y1="80" x2="130" y2="150"/>
+        <circle cx="100" cy="95" r="70" opacity="0.5"/>
+      </svg>
+    </div>
+  </section>
 
-  <h1>Score any Ethereum address for patterns seen in reported scam activity.</h1>
-  <p class="subhead">Paste an address to get a calibrated risk score with the three behavioural patterns that drove it.</p>
+  <section class="search-section">
+    <div class="input-row">
+      <div class="input-wrap" id="input-wrap">
+        <svg viewBox="0 0 24 24" class="icon"><path d="M12 2L4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4z"/></svg>
+        <input
+          id="address-input"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="0x..."
+          aria-label="Ethereum address">
+      </div>
+      <button id="score-btn" type="button">
+        <span id="score-btn-label">Score address</span>
+        <svg viewBox="0 0 24 24" class="icon" id="score-btn-icon"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+    <p class="invalid-hint" id="invalid-hint">That doesn't look like an Ethereum address — 0x followed by 40 hex characters.</p>
 
-  <div class="input-row">
-    <input
-      id="address-input"
-      type="text"
-      inputmode="text"
-      autocomplete="off"
-      spellcheck="false"
-      placeholder="0x..."
-      aria-label="Ethereum address">
-    <button id="score-btn" type="button">Score address</button>
-  </div>
-
-  <div class="examples" id="examples" aria-label="Example addresses"></div>
+    <div class="examples" id="examples" aria-label="Example addresses">
+      <span class="examples-label">Try:</span>
+    </div>
+  </section>
 
   <div id="result-region" role="region" aria-live="polite">
     <div class="card card-idle" id="result-card">
-      Paste an address above, or pick an example, to see a risk score.
+      <div class="idle-title">No address analysed yet</div>
+      Enter an Ethereum address to generate a calibrated behavioural risk score.
     </div>
   </div>
+
+  <div class="card transparency-bar" id="transparency-bar"></div>
 
   <footer id="footer">Risk scores describe patterns in publicly reported data. They are not an accusation and not financial advice.</footer>
 </main>
@@ -406,11 +722,35 @@
 <script>
 (function () {
   const input = document.getElementById('address-input');
+  const inputWrap = document.getElementById('input-wrap');
+  const invalidHint = document.getElementById('invalid-hint');
   const scoreBtn = document.getElementById('score-btn');
+  const scoreBtnLabel = document.getElementById('score-btn-label');
   const resultCard = document.getElementById('result-card');
   const modelChip = document.getElementById('model-chip');
   const examplesEl = document.getElementById('examples');
+  const transparencyBar = document.getElementById('transparency-bar');
   const ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
+
+  const ICONS = {
+    copy: '<svg viewBox="0 0 24 24" class="icon"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
+    arrowUp: '<svg viewBox="0 0 24 24" class="icon"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>',
+    arrowDown: '<svg viewBox="0 0 24 24" class="icon"><path d="M12 5v14"/><path d="M18 13l-6 6-6-6"/></svg>',
+    users: '<svg viewBox="0 0 24 24" class="icon"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.3 2.9-6 6.5-6s6.5 2.7 6.5 6"/><circle cx="17.5" cy="9" r="2.6"/><path d="M15.2 14.3c2.6.4 4.3 2.6 4.3 5.7"/></svg>',
+    clock: '<svg viewBox="0 0 24 24" class="icon"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>',
+    info: '<svg viewBox="0 0 24 24" class="icon"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" class="icon"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/></svg>',
+    database: '<svg viewBox="0 0 24 24" class="icon"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/><path d="M4 11.5v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg>',
+    target: '<svg viewBox="0 0 24 24" class="icon"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>',
+    lock: '<svg viewBox="0 0 24 24" class="icon"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>',
+  };
+
+  const BAND_LABEL = { low: 'LOW RISK', medium: 'MEDIUM RISK', high: 'HIGH RISK' };
+  const BAND_INTERPRETATION = {
+    low: "This address's behavioural pattern is consistent with typical, lower-risk historical activity.",
+    medium: "This address shows some behavioural patterns also seen in historically reported activity, alongside otherwise typical activity.",
+    high: "This address's behavioural pattern closely matches patterns seen in historically reported activity.",
+  };
 
   function truncate(addr) {
     return addr.slice(0, 6) + '…' + addr.slice(-4);
@@ -420,26 +760,74 @@
     return new Intl.NumberFormat('en-US').format(n);
   }
 
-  // ---- model info chip -------------------------------------------------
+  function escapeHtml(s) {
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  function strengthLabel(weight, maxWeight) {
+    const ratio = Math.abs(weight) / maxWeight;
+    if (ratio >= 0.66) return 'Strong';
+    if (ratio >= 0.33) return 'Moderate';
+    return 'Weak';
+  }
+
+  // ---- model info: header chip + transparency bar ------------------------
   fetch('/api/model/info')
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(info => {
       modelChip.textContent =
         `n=${fmtNum(info.n_rows)} · PR-AUC ${info.pr_auc} · trained ${info.trained_on}`;
+
+      transparencyBar.innerHTML = `
+        <div class="transparency-item">
+          ${ICONS.shield}
+          <div>
+            <div class="transparency-label">Model performance</div>
+            <div class="transparency-value">PR-AUC ${info.pr_auc}</div>
+          </div>
+        </div>
+        <div class="transparency-item">
+          ${ICONS.database}
+          <div>
+            <div class="transparency-label">Trained on</div>
+            <div class="transparency-value">${fmtNum(info.n_rows)} labelled addresses</div>
+          </div>
+        </div>
+        <div class="transparency-item">
+          ${ICONS.target}
+          <div>
+            <div class="transparency-label">Features</div>
+            <div class="transparency-value">14 on-chain signals</div>
+          </div>
+        </div>
+        <div class="transparency-item">
+          ${ICONS.lock}
+          <div>
+            <div class="transparency-label">Privacy first</div>
+            <div class="transparency-value">No raw data stored</div>
+          </div>
+        </div>
+      `;
     })
-    .catch(() => { modelChip.textContent = 'model info unavailable'; });
+    .catch(() => {
+      modelChip.textContent = 'model info unavailable';
+      transparencyBar.style.display = 'none';
+    });
 
   // ---- example chips ------------------------------------------------------
   fetch('/api/examples')
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(data => {
-      examplesEl.innerHTML = '';
       data.examples.forEach(addr => {
         const chip = document.createElement('button');
         chip.type = 'button';
-        chip.className = 'example-chip mono';
+        chip.className = 'chip mono';
         chip.textContent = truncate(addr);
         chip.addEventListener('click', () => {
+          document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
           input.value = addr;
           runScore(addr);
         });
@@ -451,84 +839,98 @@
   // ---- rendering states ----------------------------------------------------
   function renderIdle() {
     resultCard.className = 'card card-idle';
-    resultCard.textContent = 'Paste an address above, or pick an example, to see a risk score.';
+    resultCard.innerHTML = `
+      <div class="idle-title">No address analysed yet</div>
+      Enter an Ethereum address to generate a calibrated behavioural risk score.
+    `;
   }
 
   function renderLoading() {
-    resultCard.className = 'card skeleton';
+    resultCard.className = 'card skeleton skeleton-card';
     resultCard.innerHTML = `
       <div class="skel-ring"></div>
-      <div class="skel-line" style="width:60%"></div>
-      <div class="skel-line" style="width:80%"></div>
-      <div class="skel-line" style="width:70%"></div>
+      <div>
+        <div class="skel-line" style="width:50%"></div>
+        <div class="skel-line" style="width:85%"></div>
+        <div class="skel-line" style="width:70%"></div>
+        <div class="skel-line" style="width:90%"></div>
+      </div>
     `;
   }
 
   function renderError(body) {
     resultCard.className = 'card error-card';
     resultCard.innerHTML = `
-      <div class="error-message">${escapeHtml(body.message || 'Something went wrong.')}</div>
-      <div class="error-hint">${escapeHtml(body.hint || '')}</div>
+      <div class="error-message">${escapeHtml(body.message || 'Unable to analyse this address.')}</div>
+      <div class="error-hint">${escapeHtml(body.hint || 'Check that the address is a valid Ethereum address and try again.')}</div>
     `;
-  }
-
-  function escapeHtml(s) {
-    const div = document.createElement('div');
-    div.textContent = s;
-    return div.innerHTML;
   }
 
   function renderResult(data) {
     resultCard.className = 'card';
+    resultCard.style.padding = '0';
     const bandVar = `var(--${data.risk_band})`;
-    const bandSoftVar = `var(--${data.risk_band}-soft)`;
+    const bandLabel = BAND_LABEL[data.risk_band] || data.risk_band.toUpperCase();
+    const interpretation = BAND_INTERPRETATION[data.risk_band] || '';
 
     const maxWeight = Math.max(...data.top_reasons.map(r => Math.abs(r.weight)), 0.0001);
 
     const reasonsHtml = data.top_reasons.map((r, i) => {
       const pct = Math.round((Math.abs(r.weight) / maxWeight) * 100);
-      const barColor = r.direction === 'raises' ? bandVar : 'var(--ink-faint)';
+      const barColor = r.direction === 'raises' ? bandVar : 'var(--text-muted)';
       return `
         <div class="reason" style="animation-delay:${i * 60}ms">
+          <div class="reason-head">
+            <div class="reason-fact">${ICONS.info}${escapeHtml(r.fact)}</div>
+            <div class="reason-strength">${strengthLabel(r.weight, maxWeight)}</div>
+          </div>
           <div class="reason-track"><div class="reason-bar" data-pct="${pct}" style="background:${barColor}"></div></div>
-          <div class="reason-fact">${escapeHtml(r.fact)}</div>
         </div>
       `;
     }).join('');
 
     resultCard.innerHTML = `
-      <div class="ring-wrap">
-        <div class="ring" id="score-ring" style="--band-color:${bandVar}">
-          <div class="ring-inner">
-            <div class="ring-value">${data.risk_score.toFixed(2)}</div>
-            <div class="ring-band">${data.risk_band}</div>
+      <div class="result-card">
+        <div class="gauge-col">
+          <div class="ring" id="score-ring" style="--band-color:${bandVar}">
+            <div class="ring-inner">
+              <div class="ring-value">${data.risk_score.toFixed(2)}</div>
+              <div class="ring-band">${data.risk_band}</div>
+              <div class="ring-caption">Score</div>
+            </div>
+          </div>
+        </div>
+        <div class="info-col">
+          <div class="address-row">
+            <button class="address-copy mono" id="copy-btn" title="Click to copy full address">
+              ${ICONS.copy}${truncate(data.address)}
+            </button>
+            <span class="risk-pill" style="color:${bandVar};background:color-mix(in srgb, ${bandVar} 14%, transparent);border:1px solid color-mix(in srgb, ${bandVar} 40%, transparent)">${bandLabel}</span>
+          </div>
+          <p class="interpretation">${escapeHtml(interpretation)}</p>
+          <div class="metrics-row">
+            <div class="metric-item">${ICONS.arrowUp}<div class="metric-body"><div class="metric-value">${fmtNum(data.activity.sent)}</div><div class="metric-label">Sent</div></div></div>
+            <div class="metric-item">${ICONS.arrowDown}<div class="metric-body"><div class="metric-value">${fmtNum(data.activity.received)}</div><div class="metric-label">Received</div></div></div>
+            <div class="metric-item">${ICONS.users}<div class="metric-body"><div class="metric-value">${fmtNum(data.activity.unique_counterparties)}</div><div class="metric-label">Counterparties</div></div></div>
+            <div class="metric-item">${ICONS.clock}<div class="metric-body"><div class="metric-value">${fmtNum(data.activity.lifetime_days)}</div><div class="metric-label">Lifetime days</div></div></div>
           </div>
         </div>
       </div>
-      <div class="address-line">
-        <button class="address-copy mono" id="copy-btn" title="Click to copy full address">${truncate(data.address)}</button>
+      <div class="why-card">
+        <div class="why-title">Why this score</div>
+        ${reasonsHtml}
       </div>
-      <div class="activity">
-        <div class="activity-item"><div class="activity-value">${fmtNum(data.activity.sent)}</div><div class="activity-label">sent</div></div>
-        <div class="activity-item"><div class="activity-value">${fmtNum(data.activity.received)}</div><div class="activity-label">received</div></div>
-        <div class="activity-item"><div class="activity-value">${fmtNum(data.activity.unique_counterparties)}</div><div class="activity-label">counterparties</div></div>
-        <div class="activity-item"><div class="activity-value">${fmtNum(data.activity.lifetime_days)}</div><div class="activity-label">lifetime days</div></div>
-      </div>
-      <div class="reasons-title">Why this score</div>
-      ${reasonsHtml}
     `;
 
     document.getElementById('copy-btn').addEventListener('click', () => {
       navigator.clipboard.writeText(data.address).then(() => {
         const btn = document.getElementById('copy-btn');
-        const original = btn.textContent;
-        btn.textContent = 'Copied';
-        setTimeout(() => { btn.textContent = original; }, 1200);
+        const original = btn.innerHTML;
+        btn.innerHTML = 'Copied';
+        setTimeout(() => { btn.innerHTML = original; }, 1200);
       });
     });
 
-    // Trigger the ring fill and bar widths on the next frame so the
-    // transition actually animates from 0.
     const ring = document.getElementById('score-ring');
     const bars = resultCard.querySelectorAll('.reason-bar');
     requestAnimationFrame(() => {
@@ -546,8 +948,12 @@
     const address = (rawAddress || '').trim();
     if (!address || inFlight) return;
 
+    invalidHint.classList.remove('show');
+    inputWrap.classList.remove('invalid');
+
     inFlight = true;
     scoreBtn.disabled = true;
+    scoreBtnLabel.textContent = 'Analysing…';
     renderLoading();
 
     fetch('/api/score', {
@@ -558,6 +964,10 @@
       .then(async (r) => {
         const body = await r.json();
         if (!r.ok) {
+          if (r.status === 422) {
+            inputWrap.classList.add('invalid');
+            invalidHint.classList.add('show');
+          }
           renderError(body);
           return;
         }
@@ -568,19 +978,23 @@
       })
       .catch(() => {
         renderError({
-          message: 'Could not reach the scoring service.',
-          hint: 'Check your connection and try again.',
+          message: 'Analysis service unavailable.',
+          hint: 'Please retry in a moment.',
         });
       })
       .finally(() => {
         inFlight = false;
         scoreBtn.disabled = false;
+        scoreBtnLabel.textContent = 'Score address';
       });
   }
 
   scoreBtn.addEventListener('click', () => runScore(input.value));
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') runScore(input.value);
+  });
+  input.addEventListener('input', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
   });
 
   document.addEventListener('keydown', (e) => {
