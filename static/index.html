@@ -36,241 +36,291 @@
   }
 
   * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overscroll-behavior: none; }
 
   body {
-    margin: 0;
     background: var(--bg);
     color: var(--ink);
     font-family: 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 15px;
-    line-height: 1.6;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    overflow: hidden;
   }
 
   a { color: var(--accent); }
-
-  code, .mono {
-    font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  }
+  code, .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
 
   svg.icon {
-    width: 15px;
-    height: 15px;
-    stroke: currentColor;
-    stroke-width: 1.6;
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    width: 15px; height: 15px;
+    stroke: currentColor; stroke-width: 1.6; fill: none;
+    stroke-linecap: round; stroke-linejoin: round;
     flex-shrink: 0;
   }
 
-  .wrap {
-    max-width: 1040px;
-    margin: 0 auto;
-    padding: 0 24px;
+  button { font-family: inherit; }
+
+  /* ==================================================================
+     SCREENS — landing (3D intro) and app (search + result), swapped
+     ================================================================== */
+  .screen {
+    position: fixed;
+    inset: 0;
+    height: 100dvh;
+    width: 100vw;
   }
 
-  /* ---- header ------------------------------------------------------------ */
+  /* ---- landing ------------------------------------------------------- */
+  #landing {
+    background: #05070D;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 500ms var(--ease);
+  }
+
+  #landing.leaving { opacity: 0; pointer-events: none; }
+
+  #hero-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .landing-fallback-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(46% 60% at 28% 42%, rgba(56,97,251,0.35), transparent 70%),
+      radial-gradient(40% 55% at 74% 60%, rgba(242,167,59,0.28), transparent 70%),
+      #05070D;
+    display: none;
+  }
+  #landing.no-3d .landing-fallback-bg { display: block; }
+  #landing.no-3d .landing-fallback-bg::before,
+  #landing.no-3d .landing-fallback-bg::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(1px);
+  }
+  #landing.no-3d .landing-fallback-bg::before {
+    width: 220px; height: 220px; left: 22%; top: 34%;
+    background: conic-gradient(from 0deg, #6C8CF5, #3861FB, #6C8CF5);
+    animation: spin-slow 14s linear infinite;
+  }
+  #landing.no-3d .landing-fallback-bg::after {
+    width: 150px; height: 150px; left: 68%; top: 52%;
+    background: conic-gradient(from 90deg, #F2A73B, #C97A1A, #F2A73B);
+    animation: spin-slow 10s linear infinite reverse;
+  }
+  @keyframes spin-slow { to { transform: rotate(360deg); } }
+
+  .landing-scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 55% at 50% 46%, rgba(5,7,13,0.55) 0%, rgba(5,7,13,0.2) 60%, transparent 100%),
+      linear-gradient(180deg, rgba(5,7,13,0.15) 0%, rgba(5,7,13,0.55) 68%, rgba(5,7,13,0.85) 100%);
+    pointer-events: none;
+  }
+
+  .landing-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 24px;
+    max-width: 640px;
+  }
+
+  .landing-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #93A5D9;
+    margin-bottom: 18px;
+  }
+
+  .landing-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #FAFAFA;
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 22px;
+  }
+  .landing-brand svg { width: 22px; height: 22px; color: #6C8CF5; }
+
+  .landing-content h1 {
+    font-weight: 700;
+    font-size: clamp(28px, 4.4vw, 46px);
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    color: #F5F6FA;
+    margin: 0 0 16px;
+  }
+
+  .landing-content h1 .accent { color: #6C8CF5; }
+
+  .landing-sub {
+    color: #A9B2C7;
+    font-size: 15px;
+    max-width: 460px;
+    margin: 0 auto 32px;
+  }
+
+  #enter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #F5F6FA;
+    color: #0A0E1A;
+    border: none;
+    border-radius: var(--r);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 14px 26px;
+    cursor: pointer;
+    transition: transform 150ms var(--ease), background 150ms var(--ease);
+  }
+  #enter-btn:hover { background: #fff; transform: translateY(-1px); }
+  #enter-btn:focus-visible { outline: 2px solid #6C8CF5; outline-offset: 3px; }
+
+  .landing-hint {
+    margin-top: 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #5B6588;
+    letter-spacing: 0.04em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #landing { transition: none; }
+  }
+
+  /* ---- app screen ----------------------------------------------------- */
+  #app {
+    display: none;
+    flex-direction: column;
+    height: 100dvh;
+    background: var(--bg);
+    opacity: 0;
+    transition: opacity 350ms var(--ease);
+  }
+  #app.visible { display: flex; }
+  #app.entered { opacity: 1; }
+
   .topbar {
+    flex: 0 0 auto;
     border-bottom: 1px solid var(--border);
     background: var(--surface);
-  }
-
-  .topbar-inner {
-    max-width: 1040px;
-    margin: 0 auto;
-    padding: 18px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    flex-wrap: wrap;
+    padding: 14px clamp(16px, 3vw, 32px);
   }
 
   .brand {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-weight: 700;
-    font-size: 16px;
-    letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 9px;
+    font-weight: 700; font-size: 15px; letter-spacing: -0.01em;
+    background: none; border: none; cursor: pointer; color: var(--ink); padding: 0;
   }
-
-  .brand svg { width: 19px; height: 19px; color: var(--accent); stroke-width: 1.8; }
+  .brand svg { width: 18px; height: 18px; color: var(--accent); stroke-width: 1.8; }
+  .brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
   .model-chip {
-    font-size: 11px;
-    color: var(--ink-soft);
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 11px; color: var(--ink-soft);
+    letter-spacing: 0.03em; text-transform: uppercase;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
-  /* ---- hero ---------------------------------------------------------------- */
-  .hero { padding: 56px 0 40px; }
-
-  .eyebrow {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--accent);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  .search-block {
+    flex: 0 0 auto;
+    padding: 16px clamp(16px, 3vw, 32px) 12px;
   }
 
-  .eyebrow::before {
-    content: "";
-    width: 22px;
-    height: 1px;
-    background: var(--accent);
-  }
-
-  h1 {
-    font-weight: 700;
-    font-size: 42px;
-    line-height: 1.16;
-    letter-spacing: -0.015em;
-    margin: 0 0 16px;
-    max-width: 660px;
-  }
-
-  h1 .accent { color: var(--accent); }
-
-  .subhead {
-    color: var(--ink-soft);
-    font-size: 16px;
-    max-width: 500px;
-    margin: 0;
-  }
-
-  /* ---- search section ---------------------------------------------------- */
-  .search-section { padding-top: 36px; }
-
-  .field-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--ink-faint);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .input-row { display: flex; gap: 10px; }
+  .input-row { display: flex; gap: 10px; max-width: 720px; margin: 0 auto; }
 
   .input-wrap {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    height: 54px;
-    padding: 0 16px;
+    flex: 1; min-width: 0;
+    display: flex; align-items: center; gap: 10px;
+    height: 48px; padding: 0 15px;
     background: var(--surface);
     border: 1.5px solid var(--border-strong);
     border-radius: var(--r);
     transition: border-color 120ms var(--ease), box-shadow 120ms var(--ease);
   }
-
   .input-wrap svg { color: var(--ink-faint); }
-
-  .input-wrap:focus-within {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-  }
-
+  .input-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   .input-wrap.invalid { border-color: var(--high); }
 
   #address-input {
-    flex: 1;
-    min-width: 0;
+    flex: 1; min-width: 0;
     font-family: 'IBM Plex Mono', ui-monospace, monospace;
-    font-size: 14px;
-    background: transparent;
-    border: none;
-    color: var(--ink);
-    height: 100%;
+    font-size: 13.5px;
+    background: transparent; border: none; color: var(--ink); height: 100%;
   }
-
   #address-input:focus { outline: none; }
   #address-input::placeholder { color: var(--ink-faint); }
 
   #score-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    height: 54px;
-    padding: 0 22px;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: var(--r);
-    cursor: pointer;
-    white-space: nowrap;
-    min-width: 44px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-weight: 600; font-size: 13.5px;
+    height: 48px; padding: 0 20px;
+    background: var(--accent); color: #fff; border: none; border-radius: var(--r);
+    cursor: pointer; white-space: nowrap; min-width: 44px;
     transition: background 120ms var(--ease);
   }
-
   #score-btn:hover:not(:disabled) { background: var(--accent-hover); }
   #score-btn:disabled { opacity: 0.55; cursor: default; }
 
   #address-input:focus-visible, #score-btn:focus-visible, .chip:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+    outline: 2px solid var(--accent); outline-offset: 2px;
   }
 
   .invalid-hint {
-    color: var(--high);
-    font-size: 13px;
-    margin: 8px 2px 0;
-    display: none;
+    color: var(--high); font-size: 12.5px;
+    max-width: 720px; margin: 6px auto 0; display: none;
   }
   .invalid-hint.show { display: block; }
 
-  /* ---- example chips --------------------------------------------------- */
-  .examples { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
-
+  .examples {
+    display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+    max-width: 720px; margin: 10px auto 0;
+  }
   .examples-label {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--ink-faint);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-right: 2px;
+    font-size: 10.5px; color: var(--ink-faint);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-right: 2px;
   }
-
   .chip {
     font-family: 'IBM Plex Mono', ui-monospace, monospace;
-    font-size: 12px;
-    color: var(--ink-soft);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 6px 12px;
-    cursor: pointer;
-    min-height: 30px;
+    font-size: 11.5px; color: var(--ink-soft);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 999px; padding: 5px 11px; cursor: pointer; min-height: 26px;
   }
-
   .chip:hover { border-color: var(--border-strong); color: var(--ink); }
+  .chip.selected { color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border); }
 
-  .chip.selected {
-    color: var(--accent);
-    background: var(--accent-soft);
-    border-color: var(--accent-border);
+  /* ---- result area — fills remaining height, no page scroll --------------- */
+  #result-region {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 4px clamp(16px, 3vw, 32px) 10px;
+    max-width: 780px;
+    width: 100%;
+    margin: 0 auto;
+    overflow-y: auto;
   }
-
-  /* ---- result region ------------------------------------------------------ */
-  #result-region { margin-top: 40px; }
 
   .card {
     background: var(--surface);
@@ -279,244 +329,159 @@
   }
 
   .card-idle {
-    color: var(--ink-faint);
-    font-size: 14px;
-    text-align: center;
-    padding: 56px 28px;
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--ink-faint); font-size: 14px; text-align: center; padding: 24px;
   }
+  .card-idle .idle-title { color: var(--ink-soft); font-weight: 600; font-size: 15px; margin-bottom: 6px; }
 
-  .card-idle .idle-title {
-    color: var(--ink-soft);
-    font-weight: 600;
-    font-size: 15px;
-    margin-bottom: 6px;
-  }
-
-  /* ---- skeleton loading -------------------------------------------------- */
-  .skeleton-card { padding: 32px; display: grid; grid-template-columns: 220px 1fr; gap: 32px; }
+  .skeleton-card { padding: clamp(16px,3vh,28px); display: grid; grid-template-columns: 150px 1fr; gap: 24px; flex: 1; align-content: center; }
   .skeleton { animation: pulse 1.1s ease-in-out infinite; }
-  .skel-ring { width: 160px; height: 160px; border-radius: 50%; background: var(--bg); margin: 0 auto; }
-  .skel-line { height: 12px; border-radius: 3px; background: var(--bg); margin: 12px 0; }
+  .skel-ring { width: 130px; height: 130px; border-radius: 50%; background: var(--bg); margin: 0 auto; }
+  .skel-line { height: 11px; border-radius: 3px; background: var(--bg); margin: 11px 0; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-  @media (max-width: 720px) { .skeleton-card { grid-template-columns: 1fr; } }
+  .error-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+  .error-message { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--ink); }
+  .error-hint { font-size: 13.5px; color: var(--ink-soft); }
 
-  /* ---- risk result card ---------------------------------------------------- */
-  .result-card { display: grid; grid-template-columns: 240px 1fr; }
+  /* ---- risk result card (compact, gauge + info) --------------------------- */
+  .result-card { display: grid; grid-template-columns: clamp(140px,18vw,180px) 1fr; }
 
   .gauge-col {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 36px 20px;
+    display: flex; align-items: center; justify-content: center;
+    padding: clamp(12px, 2.4vh, 24px) 14px;
     border-right: 1px solid var(--border);
   }
+  .info-col { padding: clamp(14px,2.4vh,22px) clamp(16px,2.4vw,26px); min-width: 0; }
 
-  .info-col { padding: 32px 32px 28px; min-width: 0; }
-
-  @media (max-width: 720px) {
-    .result-card { grid-template-columns: 1fr; }
-    .gauge-col { border-right: none; border-bottom: 1px solid var(--border); padding: 28px; }
-    .info-col { padding: 24px; }
-  }
-
-  /* ---- score gauge (SVG stroke arc) ---------------------------------------- */
-  .gauge { position: relative; width: 160px; height: 160px; }
+  .gauge { position: relative; width: clamp(108px, 15vh, 148px); height: clamp(108px, 15vh, 148px); }
   .gauge svg { width: 100%; height: 100%; transform: rotate(-90deg); }
   .gauge-track { stroke: var(--bg); }
-  .gauge-arc {
-    stroke: var(--band-color);
-    stroke-linecap: butt;
-    transition: stroke-dashoffset 650ms var(--ease);
-  }
+  .gauge-arc { stroke: var(--band-color); stroke-linecap: butt; transition: stroke-dashoffset 650ms var(--ease); }
 
-  .gauge-inner {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+  .gauge-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .gauge-value { font-weight: 700; font-size: clamp(24px, 3.4vh, 36px); line-height: 1; color: var(--ink); letter-spacing: -0.02em; }
+  .gauge-band { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; color: var(--band-color); margin-top: 7px; text-transform: uppercase; }
+  .gauge-raw { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--ink-faint); margin-top: 2px; }
 
-  .gauge-value {
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-weight: 700;
-    font-size: 42px;
-    line-height: 1;
-    color: var(--ink);
-    letter-spacing: -0.02em;
-  }
-
-  .gauge-band {
-    font-family: 'IBM Plex Mono', ui-monospace, monospace;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--band-color);
-    margin-top: 9px;
-    text-transform: uppercase;
-  }
-
-  .gauge-caption {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--ink-faint);
-    margin-top: 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  /* ---- address row + interpretation --------------------------------------- */
-  .address-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-
+  .address-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
   .address-copy {
     display: flex; align-items: center; gap: 7px;
-    font-family: 'IBM Plex Mono', ui-monospace, monospace;
-    font-size: 14px; font-weight: 500;
-    color: var(--ink);
-    background: none; border: none; cursor: pointer; padding: 4px 0;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500;
+    color: var(--ink); background: none; border: none; cursor: pointer; padding: 3px 0;
   }
-
-  .address-copy svg { color: var(--ink-faint); width: 14px; height: 14px; }
+  .address-copy svg { color: var(--ink-faint); width: 13px; height: 13px; }
   .address-copy:hover svg { color: var(--accent); }
 
   .risk-pill {
     font-family: 'IBM Plex Mono', ui-monospace, monospace;
-    font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
-    padding: 4px 10px;
-    border-radius: 3px;
-    text-transform: uppercase;
-    border: 1px solid;
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em;
+    padding: 3px 9px; border-radius: 3px; text-transform: uppercase; border: 1px solid;
   }
 
-  .interpretation { color: var(--ink-soft); font-size: 14px; line-height: 1.65; margin: 0 0 24px; max-width: 56ch; }
+  .interpretation { color: var(--ink-soft); font-size: 13px; line-height: 1.5; margin: 0 0 14px; max-width: 56ch; }
 
-  /* ---- metrics row ----------------------------------------------------- */
-  .metrics-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    border-top: 1px solid var(--border);
-    padding-top: 20px;
-  }
-
-  .metric-item { display: flex; align-items: center; gap: 9px; padding-right: 12px; border-right: 1px solid var(--border); }
+  .metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--border); padding-top: 12px; }
+  .metric-item { display: flex; align-items: center; gap: 8px; padding-right: 10px; border-right: 1px solid var(--border); }
   .metric-item:last-child { border-right: none; }
-  .metric-item svg { color: var(--ink-faint); width: 15px; height: 15px; }
-  .metric-body { min-width: 0; }
-  .metric-value { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 17px; font-weight: 600; color: var(--ink); line-height: 1.1; }
-  .metric-label { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+  .metric-item svg { color: var(--ink-faint); width: 14px; height: 14px; }
+  .metric-value { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.1; }
+  .metric-label { font-size: 10px; color: var(--ink-faint); margin-top: 1px; }
 
-  @media (max-width: 480px) {
-    .metrics-row { grid-template-columns: repeat(2, 1fr); row-gap: 18px; }
-    .metric-item:nth-child(2) { border-right: none; }
-  }
-
-  /* ---- why this score --------------------------------------------------- */
-  .why-card { margin-top: 8px; padding: 26px 32px 28px; }
-
+  /* ---- why this score — one compact line per reason ------------------------ */
+  .why-card { margin-top: 6px; padding: 14px clamp(16px,2.4vw,26px) 6px; }
   .why-title {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 600; color: var(--ink-faint);
-    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 18px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 600; color: var(--ink-faint);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;
   }
-
   .reason {
-    padding: 14px 0;
-    border-top: 1px solid var(--border);
-    opacity: 0;
-    transform: translateY(4px);
-    animation: reason-in 300ms var(--ease) forwards;
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 0; border-top: 1px solid var(--border);
+    opacity: 0; transform: translateY(3px);
+    animation: reason-in 260ms var(--ease) forwards;
   }
-  .reason:first-of-type { border-top: none; padding-top: 0; }
+  .reason:first-of-type { border-top: none; }
   @keyframes reason-in { to { opacity: 1; transform: translateY(0); } }
+  .reason-dot { width: 7px; height: 7px; border-radius: 50%; flex: 0 0 auto; }
+  .reason-fact { flex: 1; min-width: 0; font-size: 12.5px; color: var(--ink); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .reason-strength { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; color: var(--ink-faint); letter-spacing: 0.04em; white-space: nowrap; flex: 0 0 auto; }
 
-  .reason-head { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
-  .reason-fact { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink); font-weight: 500; }
-  .reason-fact svg { color: var(--ink-faint); }
-  .reason-strength { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: var(--ink-faint); letter-spacing: 0.04em; white-space: nowrap; }
+  /* ---- stats line + disclaimer -------------------------------------------- */
+  .stats-line {
+    flex: 0 0 auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    text-align: center;
+    letter-spacing: 0.02em;
+    padding: 8px 24px 2px;
+  }
+  .stats-line strong { color: var(--ink-soft); font-weight: 600; }
 
-  .reason-track { margin-top: 10px; width: 100%; height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; }
-  .reason-bar { height: 100%; width: 0; transition: width 400ms var(--ease); }
-
-  /* ---- error / 422 states ----------------------------------------------- */
-  .error-card { text-align: center; padding: 48px 28px; }
-  .error-message { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--ink); }
-  .error-hint { font-size: 14px; color: var(--ink-soft); }
-
-  /* ---- transparency strip --------------------------------------------------- */
-  .transparency-bar {
-    margin-top: 28px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    padding: 20px 0;
+  footer {
+    flex: 0 0 auto;
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-align: center;
+    line-height: 1.5;
+    padding: 2px 24px 10px;
   }
 
-  .transparency-item { display: flex; align-items: flex-start; gap: 11px; padding: 0 20px; border-right: 1px solid var(--border); }
-  .transparency-item:last-child { border-right: none; }
-  .transparency-item svg { color: var(--accent); width: 17px; height: 17px; margin-top: 2px; }
-  .transparency-label { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
-  .transparency-value { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: var(--ink); margin-top: 3px; }
-
-  @media (max-width: 720px) {
-    .transparency-bar { grid-template-columns: repeat(2, 1fr); row-gap: 20px; }
-    .transparency-item:nth-child(2n) { border-right: none; }
-  }
-
-  /* ---- footer disclaimer -------------------------------------------------- */
-  footer { margin: 44px 0 56px; font-size: 12px; color: var(--ink-faint); text-align: center; line-height: 1.6; }
-
-  main { padding-bottom: 8px; }
-
-  @media (max-width: 480px) {
+  @media (max-width: 640px) {
+    .result-card { grid-template-columns: 1fr; }
+    .gauge-col { border-right: none; border-bottom: 1px solid var(--border); padding: 14px; }
+    .metrics-row { grid-template-columns: repeat(2, 1fr); row-gap: 10px; }
+    .metric-item:nth-child(2) { border-right: none; }
     .input-row { flex-direction: column; }
     #score-btn { width: 100%; }
-    h1 { font-size: 30px; }
-    .gauge, .skel-ring { width: 136px; height: 136px; }
-    .gauge-value { font-size: 34px; }
-    .hero { padding: 40px 0 32px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .gauge-arc { transition: none; }
     .reason { animation: none; opacity: 1; transform: none; }
-    .reason-bar { transition: none; }
     .skeleton { animation: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
+<!-- ================= LANDING ================= -->
+<section id="landing" class="screen" role="button" tabindex="0" aria-label="Enter ChainGuard">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <div class="landing-fallback-bg" aria-hidden="true"></div>
+  <div class="landing-scrim" aria-hidden="true"></div>
+  <div class="landing-content">
+    <div class="landing-brand">
       <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
       ChainGuard
     </div>
+    <div class="landing-eyebrow">Risk intelligence · Ethereum</div>
+    <h1>Score any Ethereum address for patterns seen in <span class="accent">reported scam activity.</span></h1>
+    <p class="landing-sub">A calibrated risk score and the three behavioural patterns that drove it — in under a second.</p>
+    <button id="enter-btn" type="button">
+      Launch scanner
+      <svg viewBox="0 0 24 24" class="icon"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+    </button>
+    <div class="landing-hint">click, press enter, or scroll to continue</div>
+  </div>
+</section>
+
+<!-- ================= APP ================= -->
+<section id="app" class="screen">
+  <div class="topbar">
+    <button class="brand" id="brand-btn" type="button" title="Back to intro">
+      <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+      ChainGuard
+    </button>
     <div class="model-chip mono" id="model-chip">loading model info…</div>
   </div>
-</div>
 
-<main class="wrap">
-  <section class="hero">
-    <div class="eyebrow">Risk intelligence · Ethereum</div>
-    <h1>Score any Ethereum address for patterns seen in <span class="accent">reported scam activity.</span></h1>
-    <p class="subhead">Paste an address to get a calibrated risk score and the three behavioural patterns that contributed most.</p>
-  </section>
-
-  <section class="search-section">
-    <div class="field-label">Ethereum address</div>
+  <div class="search-block">
     <div class="input-row">
       <div class="input-wrap" id="input-wrap">
         <svg viewBox="0 0 24 24" class="icon"><path d="M12 2L4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4z"/></svg>
-        <input
-          id="address-input"
-          type="text"
-          inputmode="text"
-          autocomplete="off"
-          spellcheck="false"
-          placeholder="0x..."
-          aria-label="Ethereum address">
+        <input id="address-input" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="0x..." aria-label="Ethereum address">
       </div>
       <button id="score-btn" type="button">
         <span id="score-btn-label">Score address</span>
@@ -524,11 +489,10 @@
       </button>
     </div>
     <p class="invalid-hint" id="invalid-hint">That doesn't look like an Ethereum address — 0x followed by 40 hex characters.</p>
-
     <div class="examples" id="examples" aria-label="Example addresses">
       <span class="examples-label">Try</span>
     </div>
-  </section>
+  </div>
 
   <div id="result-region" role="region" aria-live="polite">
     <div class="card card-idle" id="result-card">
@@ -537,13 +501,17 @@
     </div>
   </div>
 
-  <div class="card transparency-bar" id="transparency-bar"></div>
-
+  <div class="stats-line" id="stats-line"></div>
   <footer id="footer">Risk scores describe patterns in publicly reported data. They are not an accusation and not financial advice.</footer>
-</main>
+</section>
 
 <script>
 (function () {
+  const landing = document.getElementById('landing');
+  const app = document.getElementById('app');
+  const enterBtn = document.getElementById('enter-btn');
+  const brandBtn = document.getElementById('brand-btn');
+
   const input = document.getElementById('address-input');
   const inputWrap = document.getElementById('input-wrap');
   const invalidHint = document.getElementById('invalid-hint');
@@ -552,10 +520,11 @@
   const resultCard = document.getElementById('result-card');
   const modelChip = document.getElementById('model-chip');
   const examplesEl = document.getElementById('examples');
-  const transparencyBar = document.getElementById('transparency-bar');
+  const statsLine = document.getElementById('stats-line');
   const ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
+  const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const RADIUS = 70;
+  const RADIUS = 66;
   const CIRC = 2 * Math.PI * RADIUS;
 
   const ICONS = {
@@ -564,24 +533,18 @@
     arrowDown: '<svg viewBox="0 0 24 24" class="icon"><path d="M12 5v14"/><path d="M18 13l-6 6-6-6"/></svg>',
     users: '<svg viewBox="0 0 24 24" class="icon"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.3 2.9-6 6.5-6s6.5 2.7 6.5 6"/><circle cx="17.5" cy="9" r="2.6"/><path d="M15.2 14.3c2.6.4 4.3 2.6 4.3 5.7"/></svg>',
     clock: '<svg viewBox="0 0 24 24" class="icon"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>',
-    info: '<svg viewBox="0 0 24 24" class="icon"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none"/></svg>',
-    shield: '<svg viewBox="0 0 24 24" class="icon"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/></svg>',
-    database: '<svg viewBox="0 0 24 24" class="icon"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/><path d="M4 11.5v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg>',
-    target: '<svg viewBox="0 0 24 24" class="icon"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>',
-    lock: '<svg viewBox="0 0 24 24" class="icon"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>',
   };
 
   const BAND_LABEL = { low: 'LOW RISK', medium: 'MEDIUM RISK', high: 'HIGH RISK' };
   const BAND_INTERPRETATION = {
-    low: "This address's behavioural pattern is consistent with typical, lower-risk historical activity.",
-    medium: "This address shows some behavioural patterns also seen in historically reported activity, alongside otherwise typical activity.",
-    high: "This address's behavioural pattern closely matches patterns seen in historically reported activity.",
+    low: "Consistent with typical, lower-risk historical activity.",
+    medium: "Shows some patterns also seen in historically reported activity, alongside otherwise typical activity.",
+    high: "Closely matches patterns seen in historically reported activity.",
   };
 
   function truncate(addr) { return addr.slice(0, 6) + '…' + addr.slice(-4); }
   function fmtNum(n) { return new Intl.NumberFormat('en-US').format(n); }
   function escapeHtml(s) { const div = document.createElement('div'); div.textContent = s; return div.innerHTML; }
-
   function strengthLabel(weight, maxWeight) {
     const ratio = Math.abs(weight) / maxWeight;
     if (ratio >= 0.66) return 'Strong';
@@ -589,23 +552,123 @@
     return 'Weak';
   }
 
-  // ---- model info: header chip + transparency bar ------------------------
+  // =====================================================================
+  // Landing → App transition
+  // =====================================================================
+  let entered = false;
+  function enterApp() {
+    if (entered) return;
+    entered = true;
+    stopScene();
+    landing.classList.add('leaving');
+    app.classList.add('visible');
+    requestAnimationFrame(() => requestAnimationFrame(() => app.classList.add('entered')));
+    setTimeout(() => { landing.style.display = 'none'; }, REDUCED_MOTION ? 0 : 520);
+    setTimeout(() => input.focus(), 250);
+  }
+  function backToLanding() {
+    entered = false;
+    app.classList.remove('entered', 'visible');
+    landing.style.display = 'flex';
+    requestAnimationFrame(() => landing.classList.remove('leaving'));
+    startScene();
+  }
+
+  enterBtn.addEventListener('click', (e) => { e.stopPropagation(); enterApp(); });
+  landing.addEventListener('click', enterApp);
+  landing.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enterApp(); } });
+  landing.addEventListener('wheel', enterApp, { passive: true, once: true });
+  brandBtn.addEventListener('click', backToLanding);
+
+  // =====================================================================
+  // Landing 3D background (Three.js via CDN, graceful CSS fallback)
+  // =====================================================================
+  let stopScene = () => {};
+  let startScene = () => {};
+
+  (async function initScene() {
+    const canvas = document.getElementById('hero-canvas');
+    try {
+      const THREE = await import('https://unpkg.com/three@0.160.0/build/three.module.js');
+
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+      camera.position.set(0, 0, 6.2);
+
+      const hemi = new THREE.HemisphereLight(0xffffff, 0x0b0f1c, 0.75);
+      const dir = new THREE.DirectionalLight(0xffffff, 1.15);
+      dir.position.set(3, 4, 5);
+      scene.add(hemi, dir);
+
+      const ethGeo = new THREE.OctahedronGeometry(0.8, 0);
+      const ethMat = new THREE.MeshStandardMaterial({ color: 0x6c8cf5, metalness: 0.35, roughness: 0.3 });
+      const eth = new THREE.Mesh(ethGeo, ethMat);
+      eth.position.set(-3.1, 0.9, -1.2);
+      const ethEdges = new THREE.LineSegments(
+        new THREE.EdgesGeometry(ethGeo),
+        new THREE.LineBasicMaterial({ color: 0xC7D2FE, transparent: true, opacity: 0.5 })
+      );
+      eth.add(ethEdges);
+
+      const btcGeo = new THREE.CylinderGeometry(0.75, 0.75, 0.2, 48);
+      const btcMat = new THREE.MeshStandardMaterial({ color: 0xf2a73b, metalness: 0.45, roughness: 0.28 });
+      const btc = new THREE.Mesh(btcGeo, btcMat);
+      btc.position.set(3.2, -0.7, -1.6);
+      btc.rotation.x = Math.PI / 2.3;
+      btc.rotation.z = 0.3;
+
+      scene.add(eth, btc);
+
+      function resize() {
+        const w = canvas.clientWidth || window.innerWidth;
+        const h = canvas.clientHeight || window.innerHeight;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      let raf = null;
+      let clock = new THREE.Clock();
+
+      function tick() {
+        const dt = Math.min(clock.getDelta(), 0.05);
+        eth.rotation.y += dt * 0.35;
+        eth.rotation.x += dt * 0.12;
+        btc.rotation.z += dt * 0.4;
+        renderer.render(scene, camera);
+        raf = requestAnimationFrame(tick);
+      }
+
+      startScene = function () {
+        if (raf) return;
+        if (REDUCED_MOTION) { renderer.render(scene, camera); return; }
+        tick();
+      };
+      stopScene = function () {
+        if (raf) { cancelAnimationFrame(raf); raf = null; }
+      };
+
+      startScene();
+    } catch (err) {
+      landing.classList.add('no-3d');
+    }
+  })();
+
+  // =====================================================================
+  // Model info: header chip + stats line
+  // =====================================================================
   fetch('/api/model/info')
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(info => {
       modelChip.textContent = `n=${fmtNum(info.n_rows)} · PR-AUC ${info.pr_auc} · trained ${info.trained_on}`;
-
-      transparencyBar.innerHTML = `
-        <div class="transparency-item">${ICONS.shield}<div><div class="transparency-label">Model performance</div><div class="transparency-value">PR-AUC ${info.pr_auc}</div></div></div>
-        <div class="transparency-item">${ICONS.database}<div><div class="transparency-label">Trained on</div><div class="transparency-value">${fmtNum(info.n_rows)} labelled addresses</div></div></div>
-        <div class="transparency-item">${ICONS.target}<div><div class="transparency-label">Features</div><div class="transparency-value">14 on-chain signals</div></div></div>
-        <div class="transparency-item">${ICONS.lock}<div><div class="transparency-label">Privacy first</div><div class="transparency-value">No raw data stored</div></div></div>
-      `;
+      statsLine.innerHTML = `<strong>PR-AUC ${info.pr_auc}</strong> · ${fmtNum(info.n_rows)} labelled addresses · 14 on-chain signals · no raw data stored`;
     })
-    .catch(() => {
-      modelChip.textContent = 'model info unavailable';
-      transparencyBar.style.display = 'none';
-    });
+    .catch(() => { modelChip.textContent = 'model info unavailable'; });
 
   // ---- example chips ------------------------------------------------------
   fetch('/api/examples')
@@ -627,7 +690,9 @@
     })
     .catch(() => {});
 
-  // ---- rendering states ----------------------------------------------------
+  // =====================================================================
+  // Result states
+  // =====================================================================
   function renderIdle() {
     resultCard.className = 'card card-idle';
     resultCard.innerHTML = `
@@ -644,7 +709,6 @@
         <div class="skel-line" style="width:50%"></div>
         <div class="skel-line" style="width:85%"></div>
         <div class="skel-line" style="width:70%"></div>
-        <div class="skel-line" style="width:90%"></div>
       </div>
     `;
   }
@@ -660,24 +724,22 @@
   function renderResult(data) {
     resultCard.className = 'card';
     resultCard.style.padding = '0';
+    resultCard.style.display = 'block';
     const band = data.risk_band;
     const bandVar = `var(--${band})`;
     const bandSoftVar = `var(--${band}-soft)`;
     const bandLabel = BAND_LABEL[band] || band.toUpperCase();
     const interpretation = BAND_INTERPRETATION[band] || '';
+    const pct = Math.round(data.risk_score * 100);
 
     const maxWeight = Math.max(...data.top_reasons.map(r => Math.abs(r.weight)), 0.0001);
-
     const reasonsHtml = data.top_reasons.map((r, i) => {
-      const pct = Math.round((Math.abs(r.weight) / maxWeight) * 100);
-      const barColor = r.direction === 'raises' ? bandVar : 'var(--ink-faint)';
+      const dotColor = r.direction === 'raises' ? bandVar : 'var(--ink-faint)';
       return `
-        <div class="reason" style="animation-delay:${i * 60}ms">
-          <div class="reason-head">
-            <div class="reason-fact">${ICONS.info}${escapeHtml(r.fact)}</div>
-            <div class="reason-strength">${strengthLabel(r.weight, maxWeight)}</div>
-          </div>
-          <div class="reason-track"><div class="reason-bar" data-pct="${pct}" style="background:${barColor}"></div></div>
+        <div class="reason" style="animation-delay:${i * 50}ms">
+          <div class="reason-dot" style="background:${dotColor}"></div>
+          <div class="reason-fact">${escapeHtml(r.fact)}</div>
+          <div class="reason-strength">${strengthLabel(r.weight, maxWeight)}</div>
         </div>
       `;
     }).join('');
@@ -686,15 +748,15 @@
       <div class="result-card">
         <div class="gauge-col">
           <div class="gauge" style="--band-color:${bandVar}">
-            <svg viewBox="0 0 160 160">
-              <circle class="gauge-track" cx="80" cy="80" r="${RADIUS}" stroke-width="8" fill="none"/>
-              <circle class="gauge-arc" id="gauge-arc" cx="80" cy="80" r="${RADIUS}" stroke-width="8" fill="none"
+            <svg viewBox="0 0 148 148">
+              <circle class="gauge-track" cx="74" cy="74" r="${RADIUS}" stroke-width="7" fill="none"/>
+              <circle class="gauge-arc" id="gauge-arc" cx="74" cy="74" r="${RADIUS}" stroke-width="7" fill="none"
                 stroke-dasharray="${CIRC}" stroke-dashoffset="${CIRC}"/>
             </svg>
             <div class="gauge-inner">
-              <div class="gauge-value">${data.risk_score.toFixed(2)}</div>
+              <div class="gauge-value">${pct}%</div>
               <div class="gauge-band">${band}</div>
-              <div class="gauge-caption">Score</div>
+              <div class="gauge-raw">score ${data.risk_score.toFixed(2)}</div>
             </div>
           </div>
         </div>
@@ -707,10 +769,10 @@
           </div>
           <p class="interpretation">${escapeHtml(interpretation)}</p>
           <div class="metrics-row">
-            <div class="metric-item">${ICONS.arrowUp}<div class="metric-body"><div class="metric-value">${fmtNum(data.activity.sent)}</div><div class="metric-label">Sent</div></div></div>
-            <div class="metric-item">${ICONS.arrowDown}<div class="metric-body"><div class="metric-value">${fmtNum(data.activity.received)}</div><div class="metric-label">Received</div></div></div>
-            <div class="metric-item">${ICONS.users}<div class="metric-body"><div class="metric-value">${fmtNum(data.activity.unique_counterparties)}</div><div class="metric-label">Counterparties</div></div></div>
-            <div class="metric-item">${ICONS.clock}<div class="metric-body"><div class="metric-value">${fmtNum(data.activity.lifetime_days)}</div><div class="metric-label">Lifetime days</div></div></div>
+            <div class="metric-item">${ICONS.arrowUp}<div><div class="metric-value">${fmtNum(data.activity.sent)}</div><div class="metric-label">Sent</div></div></div>
+            <div class="metric-item">${ICONS.arrowDown}<div><div class="metric-value">${fmtNum(data.activity.received)}</div><div class="metric-label">Received</div></div></div>
+            <div class="metric-item">${ICONS.users}<div><div class="metric-value">${fmtNum(data.activity.unique_counterparties)}</div><div class="metric-label">Counterparties</div></div></div>
+            <div class="metric-item">${ICONS.clock}<div><div class="metric-value">${fmtNum(data.activity.lifetime_days)}</div><div class="metric-label">Lifetime days</div></div></div>
           </div>
         </div>
       </div>
@@ -730,16 +792,14 @@
     });
 
     const arc = document.getElementById('gauge-arc');
-    const bars = resultCard.querySelectorAll('.reason-bar');
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        arc.style.strokeDashoffset = String(CIRC * (1 - data.risk_score));
-        bars.forEach(b => { b.style.width = b.dataset.pct + '%'; });
-      });
-    });
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      arc.style.strokeDashoffset = String(CIRC * (1 - data.risk_score));
+    }));
   }
 
-  // ---- scoring ---------------------------------------------------------
+  // =====================================================================
+  // Scoring
+  // =====================================================================
   let inFlight = false;
 
   function runScore(rawAddress) {
@@ -786,25 +846,27 @@
 
   scoreBtn.addEventListener('click', () => runScore(input.value));
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') runScore(input.value); });
-  input.addEventListener('input', () => {
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
-  });
+  input.addEventListener('input', () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected')); });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === '/' && document.activeElement !== input) {
+    if (e.key === '/' && entered && document.activeElement !== input) {
       e.preventDefault();
       input.focus();
     }
   });
 
-  // ---- load ?address= from the URL, if present -------------------------
+  // =====================================================================
+  // Boot: skip the landing screen if a shareable ?address= link is opened
+  // =====================================================================
   const params = new URLSearchParams(window.location.search);
   const initial = params.get('address');
+  renderIdle();
   if (initial && ADDRESS_RE.test(initial)) {
+    landing.style.display = 'none';
+    app.classList.add('visible', 'entered');
+    entered = true;
     input.value = initial;
     runScore(initial);
-  } else {
-    renderIdle();
   }
 })();
 </script>
