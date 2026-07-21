@@ -102,7 +102,7 @@ Model, calibrator, explainer and feature table load once, in a FastAPI `lifespan
 
 ### Metrics
 
-Every number below comes straight from `models/metrics.json`, produced by `train.py`. Trained on **2026-08-11**, 9,816 deduplicated rows (7,852 train / 1,964 test, 22.2% positive in both).
+Every number below comes straight from `models/metrics.json`, produced by `train.py`. Trained on **2026-08-21**, 9,816 deduplicated rows (7,852 train / 1,964 test, 22.2% positive in both).
 
 | Metric | Value |
 |---|---|
