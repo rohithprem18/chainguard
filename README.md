@@ -39,21 +39,25 @@ ChainGuard reports **patterns** in publicly reported data — an unusually high 
 
 No build step, no database, no cloud dependency: one Docker image, one port, a Parquet table loaded into memory.
 
-**Interface:** a light, Swiss-editorial "risk intelligence report" — IBM Plex Sans/Mono, a single restrained indigo accent for interaction (buttons, links, focus), a precise SVG instrument-style gauge, and risk color (green/amber/red) reserved strictly for the gauge and the risk pill — never decorative. Vanilla HTML/CSS/JS, one file, no framework.
+**Interface:** a full-viewport, no-scroll app. A landing screen with a Three.js 3D background (a slowly rotating Ethereum octahedron and Bitcoin coin over a dark scrim) leads into the scoring app on click, Enter, or scroll; the app itself — search bar, gauge, metrics, reasons, and the permanent disclaimer footer — is sized with `dvh`/`clamp()` to fit inside one screen at typical laptop heights, no page scroll required. Visually it's a light, Swiss-editorial "risk intelligence report": IBM Plex Sans/Mono, a single restrained indigo accent for interaction, a precise SVG instrument-style gauge, and risk color (green/amber/red) reserved strictly for the gauge and the risk pill — never decorative. The risk score itself renders as a percentage (`83%`) with the raw calibrated value (`score 0.83`) underneath in small print, rather than a bare decimal — a clearer headline metric, same underlying number. Vanilla HTML/CSS/JS, one file, no framework — Three.js is loaded from a CDN as an ES module for the landing scene only, with a CSS-gradient fallback if it fails to load.
+
+A direct `?address=…` link (e.g. from sharing a result) skips the landing screen entirely and opens straight into the scored result.
 
 ## Screenshots
 
 <table>
-<tr><td align="center"><b>Idle</b></td></tr>
-<tr><td><img src="docs/screenshots/idle.png" width="720" alt="ChainGuard idle state — hero, address input, example chips, empty result card"></td></tr>
-<tr><td align="center"><b>Result</b></td></tr>
-<tr><td><img src="docs/screenshots/result.png" width="720" alt="ChainGuard result state — score ring, risk pill, key metrics, why-this-score bars, model transparency strip"></td></tr>
+<tr><td align="center"><b>Landing</b></td></tr>
+<tr><td><img src="docs/screenshots/landing.png" width="720" alt="ChainGuard landing screen — 3D Ethereum/Bitcoin background, headline, launch button"></td></tr>
+<tr><td align="center"><b>App — idle</b></td></tr>
+<tr><td><img src="docs/screenshots/idle.png" width="720" alt="ChainGuard app idle state — top search bar, example chips, empty result card, all fitted in one screen"></td></tr>
+<tr><td align="center"><b>App — result</b></td></tr>
+<tr><td><img src="docs/screenshots/result.png" width="720" alt="ChainGuard result state — percentage score gauge, risk pill, key metrics, why-this-score list, all without scrolling"></td></tr>
 </table>
 
 <details>
-<summary>360px responsive view</summary>
+<summary>Mobile view (~390px)</summary>
 <br>
-<img src="docs/screenshots/mobile.png" width="360" alt="ChainGuard at 360px width — stacked gauge and metrics">
+<img src="docs/screenshots/mobile.png" width="360" alt="ChainGuard on a phone-width viewport — stacked gauge and metrics, still no scroll">
 </details>
 
 ## Quickstart
