@@ -44,19 +44,23 @@ No build step, no database, no cloud dependency beyond the container itself: one
 
 ## Screenshots
 
+Captured with Playwright against a local `make serve`, 1366×768 at 2× pixel density.
+
 <table>
-<tr><td align="center"><b>Landing</b></td></tr>
-<tr><td><img src="docs/screenshots/landing.png" width="720" alt="ChainGuard landing screen — 3D Ethereum/Bitcoin background, headline, launch button"></td></tr>
-<tr><td align="center"><b>App — idle</b></td></tr>
-<tr><td><img src="docs/screenshots/idle.png" width="720" alt="ChainGuard app idle state — top search bar, example chips, empty result card, fitted in one screen"></td></tr>
-<tr><td align="center"><b>App — result</b></td></tr>
-<tr><td><img src="docs/screenshots/result.png" width="720" alt="ChainGuard result state — percentage score gauge, risk pill, key metrics, why-this-score list"></td></tr>
+<tr><td align="center"><b>Score — idle</b></td></tr>
+<tr><td><img src="docs/screenshots/idle.png" width="720" alt="Score page, idle: headline and address input on the left, empty report placeholder on the right"></td></tr>
+<tr><td align="center"><b>Score — result</b></td></tr>
+<tr><td><img src="docs/screenshots/result.png" width="720" alt="Score page with a result: score ring at 100% high band, why-this-score bars, four activity cards"></td></tr>
+<tr><td align="center"><b>Model</b></td></tr>
+<tr><td><img src="docs/screenshots/model.png" width="720" alt="Model page: PR-AUC, ROC-AUC, Brier score and precision@100 cards, confusion matrix, training-run details"></td></tr>
+<tr><td align="center"><b>Limitations</b></td></tr>
+<tr><td><img src="docs/screenshots/limitations.png" width="720" alt="Limitations page: three cards on labels, timestamps and coverage, plus the disclaimer"></td></tr>
 </table>
 
 <details>
-<summary>Mobile view (~390px)</summary>
+<summary>Mobile view (390px)</summary>
 <br>
-<img src="docs/screenshots/mobile.png" width="360" alt="ChainGuard on a phone-width viewport — stacked gauge and metrics, still no scroll">
+<img src="docs/screenshots/mobile.png" width="360" alt="Score result on a phone-width viewport: tabs under the wordmark, stacked score ring and reasons">
 </details>
 
 ## Features
@@ -65,9 +69,10 @@ No build step, no database, no cloud dependency beyond the container itself: one
 - **Per-request explanations.** A `shap.TreeExplainer` built on the trained LightGBM booster ranks each address's 14 features by `|SHAP value|`; the top 3 are rendered through a fixed table of neutral, observational phrases (`app/scoring.py::FACTS`) — never a name, never an intent.
 - **Calibrated, not raw, probabilities.** The LightGBM output is passed through an isotonic regressor (`CalibratedClassifierCV`, `models/calibrator.joblib`) before it's shown, so a score of `0.8` means roughly what it says — see [Model](#model).
 - **Data-derived risk bands.** `high`/`medium` cutoffs come from the test-set precision–recall curve (`train.py::derive_thresholds`), not hardcoded round numbers.
-- **3D landing screen.** A Three.js scene (loaded as an ES module from a CDN) renders a slowly rotating Ethereum octahedron and Bitcoin coin behind the intro screen; if the module or WebGL is unavailable, it falls back to a CSS radial-gradient background automatically.
-- **Single-viewport app.** The scoring screen — search bar, gauge, metrics, reasons, and the disclaimer footer — is laid out as one `dvh`/`clamp()`-sized flex column with no page scroll at typical laptop and phone viewport heights.
-- **Shareable results.** A successful score pushes `?address=…` into the URL via `history.replaceState`; opening that link directly skips the landing screen and loads the result immediately.
+- **Page-wise navigation.** Three views, Score, Model and Limitations, switched from the top nav with hash routes (`#/`, `#/model`, `#/limitations`). Each view fits one desktop screen with no page scroll; the browser Back button moves between them.
+- **Model page from live metrics.** The Model view reads `GET /api/model/info` and renders the metric cards, confusion matrix, band thresholds and CV score, so it can't drift from `models/metrics.json`.
+- **Shareable results.** A successful score pushes `?address=…` into the URL via `history.replaceState`; opening that link loads the result directly.
+- **Keyboard first.** `/` jumps to the Score view and focuses the input; Enter scores.
 
 ## Tech Stack
 
@@ -81,7 +86,7 @@ No build step, no database, no cloud dependency beyond the container itself: one
 
 **Frontend**
 - Vanilla HTML/CSS/JS, one file (`static/index.html`), no framework, no build step
-- Three.js (CDN ES module) — the landing screen's 3D background only
+- Geist and Geist Mono (Google Fonts); a near-white, hairline-bordered design with the only colour in the score bands and one gradient behind the Score view
 
 **Testing / tooling**
 - pytest + httpx (`TestClient`) — `tests/test_api.py`
@@ -210,7 +215,7 @@ app/
 └── scoring.py      # ModelBundle: loads artifacts once, scores a single address
 
 static/
-└── index.html      # entire frontend — landing screen + scoring app, one file
+└── index.html      # entire frontend — Score, Model, Limitations views, one file
 
 models/              # committed training artifacts (see Data schema above)
 data/raw/            # gitignored except .gitkeep; the CSV is not committed
@@ -321,10 +326,10 @@ There is no authentication and no user accounts — the API is public and read-o
 **Reason:** an inverted or empty middle band would make the UI's 3-tier risk pill nonsensical for some fraction of addresses.
 **Result:** `high ≥ medium` is guaranteed regardless of how the curve behaves, and both numbers still come directly off the data.
 
-**Problem:** a genuine 3D scene (Three.js) is the only way to deliver the requested motion background, but the rest of the project is deliberately dependency-free and must not break if a CDN is unreachable.
-**Decision:** load Three.js as an ES module from a CDN inside a `try/catch`; on any failure (network, WebGL unavailable), add a `.no-3d` class that switches to a pure-CSS animated gradient background instead.
-**Reason:** the landing screen is a first impression, not a load-bearing part of the product — it should degrade, not break the page.
-**Result:** the app screen (search, scoring, results) has zero dependency on the 3D module succeeding.
+**Problem:** a single long scrolling page buried the score under the fold and mixed the product with its documentation.
+**Decision:** split the frontend into three views inside a fixed-height shell (nav, view, disclaimer strip), routed by URL hash rather than server paths.
+**Reason:** hash routes need nothing from FastAPI's static mount, so the app still ships as one HTML file with no build step, while each view stays linkable and works with Back.
+**Result:** the score, its three drivers and the activity summary share one screen; model evidence and limitations are one click away, and the disclaimer is visible on every view.
 
 ## Testing
 
@@ -347,7 +352,7 @@ make check   # lint + test
 
 - [x] Calibrated LightGBM risk model with SHAP explanations
 - [x] FastAPI backend, 5 routes, in-memory feature table
-- [x] Single-file frontend: 3D landing screen, single-viewport scoring app
+- [x] Single-file frontend: page-wise Score, Model and Limitations views
 - [x] Docker image, deployed on Render
 - [ ] Live on-chain lookup for addresses outside the demo dataset — pull an address's `txlist` from an Etherscan-style API, derive the same 14 features from the raw transactions, and score it, falling back to the current 404 when no API key is configured. Not implemented; the feature-derivation logic would need to be factored into a function shared with `train.py` so the two pipelines can't drift apart.
 
