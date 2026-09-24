@@ -1,8 +1,14 @@
+"""ChainGuard API — five routes, no more.
+
+Everything expensive (model, calibrator, explainer, feature table) loads
+once in `lifespan`, before the server accepts traffic. Nothing in this
+module accuses anyone of anything; it reports scores and reasons.
+"""
+
 from __future__ import annotations
 
 import re
 from contextlib import asynccontextmanager
-from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
@@ -15,14 +21,7 @@ from app.schemas import (
     ScoreRequest,
     ScoreResponse,
 )
-from app.lookup import LookupBundle
-
-try:
-    from app.scoring import ModelBundle
-except ImportError:  # slim deploys (Vercel) ship without the ML stack
-    ModelBundle = None
-
-STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+from app.scoring import ModelBundle
 
 MODEL_NOT_LOADED = {
     "message": "The scoring model isn't loaded.",
@@ -30,15 +29,9 @@ MODEL_NOT_LOADED = {
 }
 
 
-def load_bundle() -> ModelBundle | LookupBundle | None:
-    if ModelBundle is not None:
-        return ModelBundle.load()
-    return LookupBundle.load()
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.bundle = load_bundle()
+    app.state.bundle = ModelBundle.load()
     yield
 
 
@@ -51,11 +44,8 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
     return JSONResponse(status_code=exc.status_code, content=content)
 
 
-def _bundle(request: Request) -> ModelBundle | LookupBundle:
-    state = request.app.state
-    if not hasattr(state, "bundle"):  # serverless runtimes may skip lifespan
-        state.bundle = load_bundle()
-    bundle = state.bundle
+def _bundle(request: Request) -> ModelBundle:
+    bundle: ModelBundle | None = request.app.state.bundle
     if bundle is None:
         raise HTTPException(status_code=503, detail=MODEL_NOT_LOADED)
     return bundle
@@ -102,4 +92,4 @@ async def health() -> dict:
     return {"status": "up"}
 
 
-app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
