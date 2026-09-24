@@ -8,3 +8,6 @@ data/*
 !data/raw/
 data/raw/*
 !data/raw/.gitkeep
+
+.vercel
+.env*

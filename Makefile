@@ -1,5 +1,5 @@
 setup    : ; python -m venv .venv && .venv/bin/pip install -r requirements.txt
-train    : ; python train.py                  # writes models/, prints metrics
+train    : ; python train.py && python export_lookup.py   # writes models/, prints metrics
 serve    : ; uvicorn app.main:app --reload --port 7860
 test     : ; pytest -q
 lint     : ; ruff check . && make lint-language
