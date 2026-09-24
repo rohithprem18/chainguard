@@ -48,19 +48,19 @@ Captured with Playwright against a local `make serve`, 1366×768 at 2× pixel de
 
 <table>
 <tr><td align="center"><b>Score — idle</b></td></tr>
-<tr><td><img src="docs/screenshots/idle.png" width="720" alt="Score page, idle: headline and address input on the left, empty report placeholder on the right"></td></tr>
+<tr><td><img src="docs/screenshots/score-idle.png" width="720" alt="Score page, idle: headline and address input on the left, empty report placeholder on the right"></td></tr>
 <tr><td align="center"><b>Score — result</b></td></tr>
-<tr><td><img src="docs/screenshots/result.png" width="720" alt="Score page with a result: score ring at 100% high band, why-this-score bars, four activity cards"></td></tr>
+<tr><td><img src="docs/screenshots/score-result.png" width="720" alt="Score page with a result: score ring at 100% high band, why-this-score bars, four activity cards"></td></tr>
 <tr><td align="center"><b>Model</b></td></tr>
-<tr><td><img src="docs/screenshots/model.png" width="720" alt="Model page: PR-AUC, ROC-AUC, Brier score and precision@100 cards, confusion matrix, training-run details"></td></tr>
+<tr><td><img src="docs/screenshots/model-page.png" width="720" alt="Model page: PR-AUC, ROC-AUC, Brier score and precision@100 cards, confusion matrix, training-run details"></td></tr>
 <tr><td align="center"><b>Limitations</b></td></tr>
-<tr><td><img src="docs/screenshots/limitations.png" width="720" alt="Limitations page: three cards on labels, timestamps and coverage, plus the disclaimer"></td></tr>
+<tr><td><img src="docs/screenshots/limitations-page.png" width="720" alt="Limitations page: three cards on labels, timestamps and coverage, plus the disclaimer"></td></tr>
 </table>
 
 <details>
 <summary>Mobile view (390px)</summary>
 <br>
-<img src="docs/screenshots/mobile.png" width="360" alt="Score result on a phone-width viewport: tabs under the wordmark, stacked score ring and reasons">
+<img src="docs/screenshots/mobile-result.png" width="360" alt="Score result on a phone-width viewport: tabs under the wordmark, stacked score ring and reasons">
 </details>
 
 ## Features
