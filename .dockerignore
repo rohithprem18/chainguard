@@ -6,7 +6,7 @@ __pycache__/
 data/raw/*.csv
 .git/
 .gitignore
-claude.md
+docs/SPEC.md
 docs/
 README.md
 LICENSE
