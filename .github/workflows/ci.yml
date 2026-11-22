@@ -29,4 +29,4 @@ jobs:
       - name: Language check
         run: make lint-language
       - name: Tests
-        run: pytest -q
+        run: python -m pytest -q
