@@ -40,6 +40,46 @@
     --ease: cubic-bezier(.2, .7, .3, 1);
     --nav-h: 64px;
     --foot-h: 44px;
+
+    /* text/on-fill for ink-coloured buttons, and hover/focus accents */
+    --on-ink:      #ffffff;
+    --ink-hover:   #383838;
+    --focus-ring:  #c9c9c9;
+    --chip-hover:  #c9c9c9;
+  }
+
+  /* Dark theme: the same variables, re-picked for >= 4.5:1 text contrast on
+     the dark canvas (tests/test_dark_mode.py checks both palettes). */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink:            #f2f2f2;
+      --body:           #c9c9c9;
+      --mute:           #9a9a9a;
+      --faint:          #8f8f8f;
+      --hairline:       #2a2a2a;
+      --hairline-soft:  #1f1f20;
+      --canvas:         #0f0f10;
+      --elevated:       #1a1a1c;
+      --link:           #4d9fff;
+      --link-deep:      #8ec2ff;
+
+      --low:            #4d9fff;
+      --low-text:       #8ec2ff;
+      --medium:         #f5b83d;
+      --medium-text:    #ffd07a;
+      --high:           #ff6b6b;
+      --high-text:      #ff9d9d;
+
+      --on-ink:         #101012;
+      --ink-hover:      #d4d4d4;
+      --focus-ring:     #4a4a4c;
+      --chip-hover:     #4a4a4c;
+
+      --whisper: 0 1px 1px rgba(0, 0, 0, 0.4);
+    }
+    .search {
+      box-shadow: 0 2px 2px rgba(0,0,0,0.3), 0 8px 16px -4px rgba(0,0,0,0.45);
+    }
   }
 
   * { box-sizing: border-box; }
@@ -102,8 +142,8 @@
     font-size: 14px; font-weight: 500; line-height: 20px;
     border-radius: var(--r-sm);
   }
-  .btn-sm.primary { background: var(--ink); color: #fff; }
-  .btn-sm.primary:hover { background: #383838; color: #fff; }
+  .btn-sm.primary { background: var(--ink); color: var(--on-ink); }
+  .btn-sm.primary:hover { background: var(--ink-hover); color: var(--on-ink); }
   .btn-sm.ghost { background: var(--elevated); color: var(--ink); border: 1px solid var(--hairline); }
   .btn-sm.ghost:hover { background: var(--hairline-soft); color: var(--ink); }
 
@@ -150,7 +190,7 @@
     padding: 8px; display: flex; flex-direction: column; gap: 8px;
     transition: border-color 150ms var(--ease);
   }
-  .search:focus-within { border-color: #c9c9c9; }
+  .search:focus-within { border-color: var(--focus-ring); }
   .search.invalid { border-color: var(--high); }
   #address-input {
     width: 100%; height: 40px;
@@ -163,11 +203,11 @@
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     height: 40px; padding: 0 18px;
     font-size: 16px; font-weight: 500; line-height: 20px;
-    background: var(--ink); color: #fff;
+    background: var(--ink); color: var(--on-ink);
     border: none; border-radius: var(--pill); cursor: pointer; white-space: nowrap;
     transition: background 150ms var(--ease);
   }
-  .btn-pill:hover:not(:disabled) { background: #383838; }
+  .btn-pill:hover:not(:disabled) { background: var(--ink-hover); }
   .btn-pill:disabled { opacity: 0.6; cursor: default; }
 
   .search-meta {
@@ -192,7 +232,7 @@
     background: var(--elevated); border: 1px solid var(--hairline); border-radius: 64px;
     cursor: pointer; transition: border-color 150ms var(--ease);
   }
-  .chip:hover { border-color: #c9c9c9; }
+  .chip:hover { border-color: var(--chip-hover); }
   .chip[aria-pressed="true"] { border-color: var(--ink); }
 
   /* ---- report ------------------------------------------------------------- */
@@ -441,7 +481,7 @@
           <div class="eyebrow">Disclaimer</div>
           <p>Risk scores describe patterns in publicly reported data. They are not an accusation and not financial advice.</p>
         </div>
-        <a class="btn-pill" href="#/" style="color:#fff">Score an address</a>
+        <a class="btn-pill" href="#/" style="color:var(--on-ink)">Score an address</a>
       </div>
     </div>
   </section>
